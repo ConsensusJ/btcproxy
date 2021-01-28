@@ -1,4 +1,4 @@
-package org.consensusj.bitcoin.proxy
+package org.consensusj.bitcoin.proxyd
 
 import io.micronaut.runtime.EmbeddedApplication
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
