@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: org.consensusj.bitcoin.proxy
+testFramework: spock
+sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, app-name, github-workflow-graal-docker-registry, graalvm, gradle, http-client, java, java-application, logback, netty-server, readme, rxjava3, shade, spock, yaml]
