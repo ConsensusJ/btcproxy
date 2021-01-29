@@ -10,6 +10,8 @@ group = "org.consensusj.bitcoin.proxyd"
 repositories {
     mavenCentral()
     jcenter()
+    maven { url 'https://dl.bintray.com/msgilligan/maven' } // consensusj (RPC client) (will move)
+    maven { url 'https://dl.bintray.com/consensusj/maven' }
 }
 
 micronaut {
@@ -29,6 +31,10 @@ dependencies {
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut.rxjava3:micronaut-rxjava3")
     runtimeOnly("ch.qos.logback:logback-classic")
+
+    //implementation "com.msgilligan:consensusj-jsonrpc:${consensusjVersion}"
+    implementation "com.msgilligan:cj-btc-jsonrpc:${consensusjVersion}"
+    //implementation "com.msgilligan:bitcoinj-json:${consensusjVersion}"
 }
 
 
