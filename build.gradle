@@ -1,7 +1,7 @@
 plugins {
     id("groovy")
     id("com.github.johnrengelman.shadow") version "6.1.0"
-    id("io.micronaut.application") version "1.3.2"
+    id("io.micronaut.application") version "1.3.4"
 }
 
 version = "0.1"
@@ -54,7 +54,7 @@ java {
     targetCompatibility = JavaVersion.toVersion("11")
 }
 
-    dockerBuild {
+dockerBuild {
     images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
 }
 
