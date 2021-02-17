@@ -1,0 +1,27 @@
+[
+  {
+    "name" : "org.consensusj.jsonrpc.JsonRpcRequest",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.jsonrpc.JsonRpcResponse",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.jsonrpc.JsonRpcError",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.jsonrpc.JsonRpcException",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.jsonrpc.internal.NumberStringSerializer",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  }
+]
