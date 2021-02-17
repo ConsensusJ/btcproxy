@@ -51,6 +51,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
         this.remoteRpcUri = jsonRpcUri;
         this.remoteRpcUser = user;
         this.remoteRpcPass = password;
+        log.info("btcproxyd.rpc.uri: {}", jsonRpcUri);
     }
 
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.msgilligan.bitcoinj.json.conversion.RpcClientModule;
 import com.msgilligan.bitcoinj.json.conversion.RpcServerModule;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.runtime.Micronaut;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
@@ -16,25 +17,37 @@ import java.net.URI;
 public class Application {
 
     public static void main(String[] args) {
-        Micronaut.run(Application.class, args);
+        Micronaut.build(args)
+                .banner(false)
+                .mainClass(Application.class)
+                .start();
     }
+
+    @Value("${btcproxyd.rpc.uri}")
+    protected String rpcUriString;
+
+    @Value("${btcproxyd.rpc.username}")
+    protected String rpcUsername;
+
+    @Value("${btcproxyd.rpc.password}")
+    protected String rpcPassword;
 
     @Singleton
     @Named("JSON_RPC_URI")
     public URI jsonRpcUri() {
-        return URI.create("http://127.0.0.1");
+        return URI.create(rpcUriString);
     }
 
     @Singleton
     @Named("JSON_RPC_USER")
     public String jsonRpcUser() {
-        return "rpc-username";
+        return rpcUsername;
     }
 
     @Singleton
     @Named("JSON_RPC_PASSWORD")
     public String jsonRpcPassword() {
-        return "rpc-password";
+        return rpcPassword;
     }
 
     @Singleton

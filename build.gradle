@@ -4,7 +4,7 @@ plugins {
     id("io.micronaut.application") version "1.3.4"
 }
 
-version = "0.1"
+version = btcProxydVersion
 group = "org.consensusj.bitcoin.proxyd"
 
 buildScan {
@@ -17,8 +17,8 @@ buildScan {
 }
 
 repositories {
+    //mavenLocal()
     mavenCentral()
-    jcenter()
     maven { url 'https://dl.bintray.com/msgilligan/maven' } // consensusj (RPC client) (will move)
     maven { url 'https://dl.bintray.com/consensusj/maven' }
 }

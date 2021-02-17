@@ -1,3 +1,9 @@
 micronaut:
   application:
     name: btcproxyd
+
+btcproxyd:
+  rpc:
+    uri: http://localhost:8332
+    username: rpcusername
+    password: rpcpassword
