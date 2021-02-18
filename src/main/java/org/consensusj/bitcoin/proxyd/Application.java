@@ -23,13 +23,11 @@ public class Application {
         return MainNetParams.get();
     }
 
-    @Singleton
-    public Module jacksonModule(NetworkParameters networkParameters) {
-        return new RpcServerModule(null);
-    }
-
-    @Singleton
-    public Module jacksonModuleClient(NetworkParameters networkParameters) {
-        return new RpcClientModule(null);
-    }
+//    @Singleton
+//    public BitcoinClient bitcoinClient(JsonRpcProxyConfiguration configuration, NetworkParameters networkParameters) {
+//        return new BitcoinClient(networkParameters,
+//                configuration.getUri(),
+//                configuration.getUsername(),
+//                configuration.getPassword());
+//    }
 }
