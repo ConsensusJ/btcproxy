@@ -27,9 +27,8 @@ import java.util.Optional;
 @Singleton
 public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     private static final Logger log = LoggerFactory.getLogger(RxBitcoinJsonRpcProxyService.class);
-    // TODO: External configuration of allow and deny lists
     // TODO: Create default allowList that includes all "safe" operations
-    private final Optional<List<String>> optionalAllowList = Optional.empty();
+    private final Optional<List<String>> optionalAllowList;
     // TODO: Create default denyList that includes all "dangerous" operations, this is currently a partial list
     private final List<String> denyList = List.of("stop", "logging", "backupwallet", "encryptwallet", "getwalletinfo", "dumpwallet", "rescanblockchain");
     private final Optional<List<String>> optionalDenyList = Optional.of(denyList);
@@ -43,15 +42,14 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
 
     public RxBitcoinJsonRpcProxyService(HttpClient httpClient,
                                         ObjectMapper jsonMapper,
-                                        @Named("JSON_RPC_URI") URI jsonRpcUri,
-                                        @Named("JSON_RPC_USER") String user,
-                                        @Named("JSON_RPC_PASSWORD") String password) {
-        this.client = httpClient;
-        this.mapper = jsonMapper;
-        this.remoteRpcUri = jsonRpcUri;
-        this.remoteRpcUser = user;
-        this.remoteRpcPass = password;
-        log.info("btcproxyd.rpc.uri: {}", jsonRpcUri);
+                                        JsonRpcProxyConfiguration config) {
+        client = httpClient;
+        mapper = jsonMapper;
+        remoteRpcUri = config.getUri();
+        remoteRpcUser = config.getUsername();
+        remoteRpcPass = config.getPassword();
+        optionalAllowList = Optional.of(config.getAllowList());
+        log.info("btcproxyd.rpc.uri: {}", remoteRpcUri);
     }
 
 

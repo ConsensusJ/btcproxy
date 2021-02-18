@@ -1,9 +1,43 @@
 micronaut:
   application:
     name: btcproxyd
+  http:
+    client:
+      read-timeout: 300s
+  ssl:
+    enabled: false
+    buildSelfSigned: false
 
 btcproxyd:
-  rpc:
+  rpcproxy:
     uri: http://localhost:8332
     username: rpcusername
     password: rpcpassword
+    allow-list:
+      - getblockcount
+      - getbestblockhash
+      - getblock
+      - getblockchaininfo
+      - getblockcount
+      - getblockhash
+      - getblockheader
+      - getblockstats
+      - getchaintips
+      - getchaintxstats
+      - getdifficulty
+      - getmempoolancestors
+      - getmempooldescendants
+      - getmempoolentry
+      - getmempoolinfo
+      - getrawmempool
+      - gettxout
+      - gettxoutproof
+      - gettxoutsetinfo
+      - verifytxoutproof
+      - getmemoryinfo
+      - getrpcinfo
+      - uptime
+      - getconnectioncount
+      - getnettotals
+      - getnetworkinfo
+
