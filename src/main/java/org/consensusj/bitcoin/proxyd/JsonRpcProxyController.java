@@ -56,5 +56,4 @@ public class JsonRpcProxyController {
         String[] args = argString.split("/");
         return jsonRpcProxyService.rpcProxy(method, args);
     }
-
 }

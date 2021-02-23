@@ -6,6 +6,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import org.consensusj.jsonrpc.JsonRpcError;
 import org.consensusj.jsonrpc.JsonRpcRequest;
 import org.consensusj.jsonrpc.JsonRpcResponse;
@@ -13,7 +14,6 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,11 +36,13 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     private final JsonRpcError notFoundError = JsonRpcError.of(JsonRpcError.Error.METHOD_NOT_FOUND);
 
     private final HttpClient client;
+    private final TxOutSetInfoService txOutSetInfoService;
     private final URI remoteRpcUri;
     private final String remoteRpcUser;
     private final String remoteRpcPass;
 
     public RxBitcoinJsonRpcProxyService(HttpClient httpClient,
+                                        TxOutSetInfoService txOutSetInfoService,
                                         ObjectMapper jsonMapper,
                                         JsonRpcProxyConfiguration config) {
         client = httpClient;
@@ -49,6 +51,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
         remoteRpcUser = config.getUsername();
         remoteRpcPass = config.getPassword();
         optionalAllowList = Optional.of(config.getAllowList());
+        this.txOutSetInfoService = txOutSetInfoService;
         log.info("btcproxyd.rpc.uri: {}", remoteRpcUri);
     }
 
@@ -63,7 +66,16 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     @Override
     public Publisher<HttpResponse<String>> rpcProxy(JsonRpcRequest request) {
         if (methodPermitted(request)) {
-            return client.exchange( HttpRequest.POST(remoteRpcUri, request).basicAuth(remoteRpcUser, remoteRpcPass), String.class);
+            if (isCached(request)) {
+                // If a cached method, for now this is hardcoded to `gettxoutsetinfo`
+                return Flowable.fromSingle(callCached(request)
+                        .map(mapper::writeValueAsString)
+                        .map(string -> HttpResponse.ok().body(string))
+                );
+            } else {
+                // Make a remote call and return unprocessed result
+                return client.exchange( HttpRequest.POST(remoteRpcUri, request).basicAuth(remoteRpcUser, remoteRpcPass), String.class);
+            }
         } else {
             return Flowable.just(makeErrorResponse(request));
         }
@@ -81,6 +93,17 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
         List<Object> convertedArgs = convertParameters(method, List.of(args));
         JsonRpcRequest request = new JsonRpcRequest(method, convertedArgs);
         return rpcProxy(request);
+    }
+
+    private boolean isCached(JsonRpcRequest request) {
+        // Currently only one method is cached
+        return request.getMethod().equals("gettxoutsetinfo");
+    }
+
+    private Single<JsonRpcResponse<?>> callCached(JsonRpcRequest request) {
+        // Currently only  "gettxoutsetinfo" is cached
+        return txOutSetInfoService.latest()
+                .map(result -> new JsonRpcResponse<>(result, null, request.getJsonrpc(), request.getId()));
     }
 
     /**
