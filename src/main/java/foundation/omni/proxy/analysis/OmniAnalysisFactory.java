@@ -10,8 +10,8 @@ import foundation.omni.netapi.omnicore.OmniCoreClient;
 import io.micronaut.context.annotation.Factory;
 import org.bitcoinj.core.NetworkParameters;
 import org.consensusj.analytics.service.RichListService;
-import org.consensusj.bitcoin.proxyd.service.JsonRpcProxyConfiguration;
-import org.consensusj.bitcoin.proxyd.service.ProxyChainTipService;
+import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
+import org.consensusj.bitcoin.proxy.core.ProxyChainTipService;
 
 import javax.inject.Singleton;
 

@@ -1,4 +1,4 @@
-package org.consensusj.bitcoin.proxyd;
+package org.consensusj.bitcoin.proxy.jsonrpc;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -7,7 +7,6 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
-import org.consensusj.bitcoin.proxyd.service.RxJsonRpcProxyService;
 import org.consensusj.jsonrpc.JsonRpcRequest;
 import org.consensusj.jsonrpc.JsonRpcResponse;
 import org.reactivestreams.Publisher;

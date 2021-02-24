@@ -1,4 +1,4 @@
-package org.consensusj.bitcoin.proxyd.service;
+package org.consensusj.bitcoin.proxy.jsonrpc;
 
 import io.micronaut.http.HttpResponse;
 import org.consensusj.jsonrpc.JsonRpcRequest;

@@ -1,4 +1,4 @@
-package org.consensusj.bitcoin.proxyd.service;
+package org.consensusj.bitcoin.proxy.jsonrpc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

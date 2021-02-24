@@ -7,7 +7,7 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
-import org.consensusj.bitcoin.proxyd.service.JsonRpcProxyConfiguration;
+import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 
 import javax.inject.Singleton;
 

@@ -1,6 +1,5 @@
-package org.consensusj.bitcoin.proxyd.service;
+package org.consensusj.bitcoin.proxy.jsonrpc;
 
-import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import com.msgilligan.bitcoinj.json.pojo.TxOutSetInfo;
 import com.msgilligan.bitcoinj.rpc.BitcoinClient;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -11,6 +10,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import org.consensusj.bitcoin.proxy.core.ProxyChainTipService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

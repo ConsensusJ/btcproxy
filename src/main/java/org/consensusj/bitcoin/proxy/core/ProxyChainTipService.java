@@ -1,4 +1,4 @@
-package org.consensusj.bitcoin.proxyd.service;
+package org.consensusj.bitcoin.proxy.core;
 
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import com.msgilligan.bitcoinj.rpc.BitcoinClient;
