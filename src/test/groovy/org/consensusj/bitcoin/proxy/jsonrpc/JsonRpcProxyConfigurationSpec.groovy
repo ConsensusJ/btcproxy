@@ -1,7 +1,6 @@
-package org.consensusj.bitcoin.proxyd.service
+package org.consensusj.bitcoin.proxy.jsonrpc
 
 import io.micronaut.context.ApplicationContext
-import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration
 import spock.lang.Specification
 
 /**

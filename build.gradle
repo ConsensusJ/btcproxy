@@ -58,6 +58,11 @@ java {
     targetCompatibility = JavaVersion.toVersion("11")
 }
 
+test {
+    // Don't use MICRONAUT_CONFIG_FILES env variable in test
+    environment(['MICRONAUT_CONFIG_FILES':''])
+}
+
 dockerBuild {
     images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
 }
