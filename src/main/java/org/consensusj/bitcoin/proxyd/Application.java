@@ -32,9 +32,6 @@ public class Application {
 
     @Singleton
     public BitcoinClient bitcoinClient(JsonRpcProxyConfiguration configuration, NetworkParameters networkParameters) {
-        return new BitcoinClient(networkParameters,
-                configuration.getUri(),
-                configuration.getUsername(),
-                configuration.getPassword());
+        return new BitcoinClient(networkParameters, configuration.getUri(), configuration.getUsername(), configuration.getPassword());
     }
 }

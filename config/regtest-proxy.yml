@@ -1,3 +1,8 @@
+micronaut:
+  http:
+    client:
+      read-timeout: 600s
+
 btcproxyd:
   rpcproxy:
     uri: http://localhost:18443
@@ -8,4 +13,5 @@ btcproxyd:
       - generatetoaddress
       - getblockcount
       - getchaintips
+      - gettxoutsetinfo
       - uptime
