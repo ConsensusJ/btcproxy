@@ -20,7 +20,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         jsonRpcProxyConfiguration.username          == 'rpcusername'
         jsonRpcProxyConfiguration.password          == 'rpcpassword'
         jsonRpcProxyConfiguration.allowList[0]      == 'getblockcount'
-        jsonRpcProxyConfiguration.allowList.size()  == 26
+        jsonRpcProxyConfiguration.allowList.size()  == 20
 
         cleanup:
         ctx.close()

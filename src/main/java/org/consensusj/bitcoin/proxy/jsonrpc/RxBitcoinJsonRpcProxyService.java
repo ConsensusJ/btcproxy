@@ -67,7 +67,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     public Publisher<HttpResponse<String>> rpcProxy(JsonRpcRequest request) {
         if (methodPermitted(request)) {
             if (isCached(request)) {
-                // If a cached method, for now this is hardcoded to `gettxoutsetinfo`
+                // If a cached method, for now this is turned off
                 return Flowable.fromSingle(callCached(request)
                         .map(mapper::writeValueAsString)
                         .map(string -> HttpResponse.ok().body(string))
@@ -97,7 +97,9 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
 
     private boolean isCached(JsonRpcRequest request) {
         // Currently only one method is cached
-        return request.getMethod().equals("gettxoutsetinfo");
+        //return request.getMethod().equals("gettxoutsetinfo");
+        // Currently nothing is cached.
+        return false;
     }
 
     private Single<JsonRpcResponse<?>> callCached(JsonRpcRequest request) {

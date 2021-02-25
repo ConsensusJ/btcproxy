@@ -13,5 +13,4 @@ btcproxyd:
       - generatetoaddress
       - getblockcount
       - getchaintips
-      - gettxoutsetinfo
       - uptime

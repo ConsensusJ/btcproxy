@@ -7,6 +7,7 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
+import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 
 import javax.inject.Singleton;
@@ -31,7 +32,9 @@ public class Application {
     }
 
     @Singleton
-    public BitcoinClient bitcoinClient(JsonRpcProxyConfiguration configuration, NetworkParameters networkParameters) {
-        return new BitcoinClient(networkParameters, configuration.getUri(), configuration.getUsername(), configuration.getPassword());
+    public RxBitcoinClient bitcoinClient(JsonRpcProxyConfiguration configuration, NetworkParameters networkParameters) {
+        var client = new RxBitcoinClient(networkParameters, configuration.getUri(), configuration.getUsername(), configuration.getPassword());
+        client.start();
+        return client;
     }
 }

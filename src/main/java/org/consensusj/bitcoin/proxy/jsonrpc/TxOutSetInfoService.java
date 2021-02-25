@@ -1,92 +1,52 @@
 package org.consensusj.bitcoin.proxy.jsonrpc;
 
 import com.msgilligan.bitcoinj.json.pojo.TxOutSetInfo;
-import com.msgilligan.bitcoinj.rpc.BitcoinClient;
 import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-import org.consensusj.bitcoin.proxy.core.ProxyChainTipService;
+import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
-import java.io.IOError;
-import java.util.concurrent.CompletableFuture;
 
 /**
- *
+ * This service (as currently written) will poll the upstream JSON-RPC every block
+ * and ask for `txoutsetinfo` -- so it should not be used as is -- and is disabled
+ * in RxBitcoinJsonRpcProxyService.  `gettxoutsetinfo` is probably not a good
+ * service for a public API haha.
+ * TODO: Adapt into a more generic caching service for any no-parameter RPC
+ * and make configurable as to which RPC methods are used/allowed.
  */
-@Singleton
+//@Singleton
 public class TxOutSetInfoService extends Observable<TxOutSetInfo> {
     private static final Logger log = LoggerFactory.getLogger(TxOutSetInfoService.class);
-    private final ProxyChainTipService proxyChainTipService;
     private final Subject<TxOutSetInfo> txOutSetInfoSubject = BehaviorSubject.create();
-    private Disposable chainTipSubscription;
-    private final BitcoinClient jsonRpc;
+    private Disposable subscription;
+    private final RxBitcoinClient jsonRpc;
 
-    public TxOutSetInfoService (BitcoinClient client, ProxyChainTipService proxyChainTipService) {
+    public TxOutSetInfoService (RxBitcoinClient client) {
         jsonRpc = client;
-        this.proxyChainTipService = proxyChainTipService;
     }
 
     public Single<TxOutSetInfo> latest() {
-        start();
         return Single.fromObservable(txOutSetInfoSubject.take(1));
     }
 
+    @PostConstruct
     private synchronized void start() {
-        if (chainTipSubscription == null) {
+        if (subscription == null) {
             log.info("subscribing to chainTipService");
-            chainTipSubscription = proxyChainTipService
-                    .doOnNext(tip -> log.info("got a new tip {}", tip))
-                    .flatMapMaybe(tip -> this.currentTxOutSetInfoMaybe())
-                    .doOnNext(outSetInfo -> log.info("got one {}", outSetInfo))
+            subscription = jsonRpc.pollOnNewBlock(jsonRpc::getTxOutSetInfo)
                     .subscribe(txOutSetInfoSubject::onNext, txOutSetInfoSubject::onError, txOutSetInfoSubject::onComplete);
         }
     }
-
-    /**
-     * Wrap a block chainTip in a Single.
-     * @return A Single for the block height
-     */
-    private Single<TxOutSetInfo> currentTxOutSetInfo() {
-        return Single.defer(() -> Single.fromCompletionStage(txOutSetInfo()));
-    }
-
-    /**
-     * Retrieve the first ChainTip from the list returned by the
-     * standard RPC `gettxoutinfo`
-     *
-     * @return The current chain tip
-     */
-    private CompletableFuture<TxOutSetInfo> txOutSetInfo() {
-        log.info("Requesting TxOutSetInfo");
-        return jsonRpc.supplyAsync(jsonRpc::getTxOutSetInfo).whenComplete((r, e) -> {
-            if (r != null) {
-                log.info("txoutsetinfo returned: {}", r);
-            } else {
-                log.error("Error: ", e);
-            }
-        });
-    }
-
-    /**
-     * Get ChainTip, but swallowing IOExceptions
-     *
-     * @return A Maybe that is empty if an {@link IOError} occurred
-     */
-    private Maybe<TxOutSetInfo> currentTxOutSetInfoMaybe() {
-        return currentTxOutSetInfo()
-                .toMaybe()
-                .doOnError(t -> log.error("Exception in currentTxOutSetInfoMaybe", t))
-                .onErrorComplete(t -> t instanceof IOError);    // Empty completion if IOError
-    }
-
+    
     @Override
     protected void subscribeActual(@NonNull Observer<? super TxOutSetInfo> observer) {
         start();

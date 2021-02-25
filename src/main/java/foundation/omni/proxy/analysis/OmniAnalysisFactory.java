@@ -7,13 +7,15 @@ import foundation.omni.analytics.OmniLayerRichListService;
 import foundation.omni.json.conversion.OmniServerModule;
 import foundation.omni.netapi.ConsensusService;
 import foundation.omni.netapi.omnicore.OmniCoreClient;
+import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
 import org.bitcoinj.core.NetworkParameters;
 import org.consensusj.analytics.service.RichListService;
+import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
-import org.consensusj.bitcoin.proxy.core.ProxyChainTipService;
 
 import javax.inject.Singleton;
+import java.util.List;
 
 /**
  * Factory that reads {@link JsonRpcProxyConfiguration} and creates necessary objects
@@ -21,6 +23,8 @@ import javax.inject.Singleton;
  */
 @Factory
 public class OmniAnalysisFactory {
+    private final List<CurrencyID> richListEagerFetch = List.of(CurrencyID.USDT);
+
     @Singleton
     public Module jacksonModule() {
         return new OmniServerModule();
@@ -32,7 +36,11 @@ public class OmniAnalysisFactory {
     }
 
     @Singleton
-    public RichListService<OmniValue, CurrencyID> omniRichListService(ConsensusService client, ProxyChainTipService chainTipService) {
-        return new OmniLayerRichListService<>(client, chainTipService);
+    @Context
+    public RichListService<OmniValue, CurrencyID> omniRichListService(ConsensusService client, RxBitcoinClient rxBitcoinClient) {
+        var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client, rxBitcoinClient.chainTipService());
+        var cached = new CachedRichListService<>(uncached, rxBitcoinClient, richListEagerFetch);
+        cached.start();
+        return cached;
     }
 }

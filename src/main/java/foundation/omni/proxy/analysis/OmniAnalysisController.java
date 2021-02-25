@@ -14,6 +14,8 @@ import org.consensusj.analytics.service.TokenRichList;
  */
 @Controller("/omni/analysis")
 public class OmniAnalysisController {
+    private final int richListSize = 25;
+
     private final RichListService<OmniValue, CurrencyID> richListService;
 
     public OmniAnalysisController(RichListService<OmniValue, CurrencyID> richListService) {
@@ -22,6 +24,6 @@ public class OmniAnalysisController {
 
     @Get(uri="/richlist/{currencyId}", produces = MediaType.APPLICATION_JSON)
     public Single<TokenRichList<OmniValue, CurrencyID>> richList(int currencyId) {
-        return richListService.richList(CurrencyID.of(currencyId), 25);
+        return richListService.richList(CurrencyID.of(currencyId), richListSize);
     }
 }
