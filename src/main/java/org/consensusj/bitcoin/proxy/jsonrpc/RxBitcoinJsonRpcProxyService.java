@@ -36,22 +36,25 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     private final JsonRpcError notFoundError = JsonRpcError.of(JsonRpcError.Error.METHOD_NOT_FOUND);
 
     private final HttpClient client;
+    private final ExtraRpcRegistry extraRpcRegistry;
     private final TxOutSetInfoService txOutSetInfoService;
     private final URI remoteRpcUri;
     private final String remoteRpcUser;
     private final String remoteRpcPass;
 
     public RxBitcoinJsonRpcProxyService(HttpClient httpClient,
-                                        TxOutSetInfoService txOutSetInfoService,
+                                        ExtraRpcRegistry extraRpcRegistry,
+                                        /*TxOutSetInfoService txOutSetInfoService,*/
                                         ObjectMapper jsonMapper,
                                         JsonRpcProxyConfiguration config) {
         client = httpClient;
+        this.extraRpcRegistry = extraRpcRegistry;
         mapper = jsonMapper;
         remoteRpcUri = config.getUri();
         remoteRpcUser = config.getUsername();
         remoteRpcPass = config.getPassword();
         optionalAllowList = Optional.of(config.getAllowList());
-        this.txOutSetInfoService = txOutSetInfoService;
+        this.txOutSetInfoService = null; //txOutSetInfoService;
         log.info("btcproxyd.rpc.uri: {}", remoteRpcUri);
     }
 
@@ -66,19 +69,30 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     @Override
     public Publisher<HttpResponse<String>> rpcProxy(JsonRpcRequest request) {
         if (methodPermitted(request)) {
-            if (isCached(request)) {
+            log.info("method permitted: {}", request.getMethod());
+            if (extraRpcRegistry.isExtraRpcMethod(request.getMethod())) {
+                return renderResult(request, extraRpcRegistry.invoke(request));
+            } else if (isCached(request)) {
                 // If a cached method, for now this is turned off
-                return Flowable.fromSingle(callCached(request)
-                        .map(mapper::writeValueAsString)
-                        .map(string -> HttpResponse.ok().body(string))
-                );
+                return renderResponse(callCached(request));
             } else {
                 // Make a remote call and return unprocessed result
                 return client.exchange( HttpRequest.POST(remoteRpcUri, request).basicAuth(remoteRpcUser, remoteRpcPass), String.class);
             }
         } else {
+            log.error("method denied: {}", request.getMethod());
             return Flowable.just(makeErrorResponse(request));
         }
+    }
+
+    private Publisher<HttpResponse<String>> renderResult(JsonRpcRequest request, Single<?> result) {
+        return renderResponse(result.map(r -> responseFromResult(request, r)));
+    }
+
+    private Publisher<HttpResponse<String>> renderResponse(Single<JsonRpcResponse<?>> response) {
+        return Flowable.fromSingle(response
+                .map(mapper::writeValueAsString)
+                .map(string -> HttpResponse.ok().body(string)));
     }
 
     @Override
@@ -105,7 +119,11 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     private Single<JsonRpcResponse<?>> callCached(JsonRpcRequest request) {
         // Currently only  "gettxoutsetinfo" is cached
         return txOutSetInfoService.latest()
-                .map(result -> new JsonRpcResponse<>(result, null, request.getJsonrpc(), request.getId()));
+                .map(result -> responseFromResult(request, result));
+    }
+
+    private static <RSLT> JsonRpcResponse<RSLT> responseFromResult(JsonRpcRequest request, RSLT result) {
+        return new JsonRpcResponse<>(result, null, request.getJsonrpc(), request.getId());
     }
 
     /**

@@ -14,11 +14,11 @@ import org.consensusj.analytics.service.TokenRichList;
  */
 @Controller("/omni/analysis")
 public class OmniAnalysisController {
-    private final int richListSize = 25;
+    private final int richListSize = 12;
 
     private final RichListService<OmniValue, CurrencyID> richListService;
 
-    public OmniAnalysisController(RichListService<OmniValue, CurrencyID> richListService) {
+    public OmniAnalysisController(RichListService<OmniValue, CurrencyID> richListService, OmniAnalysisService omniAnalysisService) {
         this.richListService = richListService;
     }
 

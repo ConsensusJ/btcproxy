@@ -1,0 +1,32 @@
+[
+  {
+    "name" : "com.msgilligan.bitcoinj.json.pojo.ChainTip",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "foundation.omni.json.pojo.OmniPropertyInfo",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "foundation.omni.rpc.SmartPropertyListInfo",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "foundation.omni.rpc.AddressBalanceEntry",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.analytics.service.TokenRichList",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.analytics.service.TokenRichList$TokenBalancePair",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  }
+]

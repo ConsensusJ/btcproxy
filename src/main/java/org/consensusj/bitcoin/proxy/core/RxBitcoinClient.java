@@ -2,6 +2,7 @@ package org.consensusj.bitcoin.proxy.core;
 
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import com.msgilligan.bitcoinj.rpc.BitcoinClient;
+import foundation.omni.rpc.OmniClient;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -15,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
 import java.io.IOError;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -23,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * RxJava subclass of BitcoinClient, that internally polls for new blocks
  */
-public class RxBitcoinClient extends BitcoinClient {
+public class RxBitcoinClient extends OmniClient {
     private static final Logger log = LoggerFactory.getLogger(RxBitcoinClient.class);
     private final Observable<Long> interval;
-    private Disposable intervalSubscription;
+    private Disposable chainTipSubscription;
     // BehaviorProcessor will remember the last block received and pass it to new subscribers.
     private final Subject<ChainTip> chainTipSubject = BehaviorSubject.create();
 
@@ -37,9 +37,9 @@ public class RxBitcoinClient extends BitcoinClient {
 
     @PostConstruct
     public synchronized void start() {
-        if (intervalSubscription == null) {
+        if (chainTipSubscription == null) {
             log.info("Starting...");
-            intervalSubscription = pollForDistinctChainTip()
+            chainTipSubscription = pollForDistinctChainTip()
                     .subscribe(chainTipSubject::onNext, chainTipSubject::onError, chainTipSubject::onComplete);
         }
     }
@@ -72,6 +72,10 @@ public class RxBitcoinClient extends BitcoinClient {
                 .doOnError(t -> log.error("Exception in RPCCall", t))
                 .toMaybe()
                 .onErrorComplete(t -> t instanceof IOError);    // Empty completion if IOError
+    }
+
+    public <RSLT> Single<RSLT> call(AsyncSupport.ThrowingSupplier<RSLT> method) {
+        return Single.defer(() -> Single.fromCompletionStage(this.supplyAsync(method)));
     }
 
     /**

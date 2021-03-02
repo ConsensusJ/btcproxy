@@ -37,7 +37,7 @@ public class OmniAnalysisFactory {
 
     @Singleton
     @Context
-    public RichListService<OmniValue, CurrencyID> omniRichListService(ConsensusService client, RxBitcoinClient rxBitcoinClient) {
+    public CachedRichListService<OmniValue, CurrencyID> omniRichListService(ConsensusService client, RxBitcoinClient rxBitcoinClient) {
         var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client, rxBitcoinClient.chainTipService());
         var cached = new CachedRichListService<>(uncached, rxBitcoinClient, richListEagerFetch);
         cached.start();

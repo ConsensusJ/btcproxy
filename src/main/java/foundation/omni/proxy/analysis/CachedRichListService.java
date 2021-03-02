@@ -25,7 +25,7 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     private final RxBitcoinClient jsonRpc;
     private final List<ID> eager;
     private final ConcurrentHashMap<ID, Single<TokenRichList<N, ID>>> cache = new ConcurrentHashMap<>();
-    private final int cacheSize = 25;
+    private final int cacheSize = 12;
     private Disposable chainTipSubscription;
 
     public CachedRichListService(RichListService<N, ID> uncachedService, RxBitcoinClient rxBitcoinClient, List<ID> eager) {
@@ -38,7 +38,7 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = jsonRpc.chainTipService().subscribe(this::onNewBlock);
+            chainTipSubscription = jsonRpc.chainTipService().subscribe(this::onNewBlock, this::onError);
         }
     }
 
@@ -53,6 +53,10 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
         throw new UnsupportedOperationException("this service is incubating and this method isn't available yet.");
     }
 
+    private void onError(Throwable t) {
+        log.error("CachedRichListService onError: ", t);
+    }
+
     /**
      * On a new block, invalidate the cache and initiate fetch requests for the Currency IDs on
      * the "eager" list.
@@ -62,14 +66,21 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     private void onNewBlock(ChainTip tip) {
         log.info("New Block: {}/{}", tip.getHeight(), tip.getHash());
         cache.clear();
-        eager.forEach(this::fetch);
+        eager.forEach(id -> {
+            this.fetch(id).subscribe((r) -> {} , this::onError);
+        });
     }
 
     private Single<TokenRichList<N, ID>> fetch(ID id) {
         return cache.computeIfAbsent(id, key -> {
             log.info("Fetching {}", id);
-            return uncachedService.richList(id, cacheSize).cache();
-        });
+            return uncachedService.richList(id, cacheSize)
+                    .doOnError(t -> log.error("Got an error from upstream", t))
+                    .doOnSuccess(r -> log.info("got rich list from upstream {}", r.getCurrencyID()))
+                    .cache();
+        })
+        .doOnError(t -> log.error("Error reading from richList cache", t))
+        .doOnSuccess(r -> log.info("pulled from cache {}", r.getCurrencyID()));
     }
 
 }
