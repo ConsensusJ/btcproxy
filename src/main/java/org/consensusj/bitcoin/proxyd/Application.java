@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.Module;
 import com.msgilligan.bitcoinj.json.conversion.RpcServerModule;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
-import org.bitcoinj.core.NetworkParameters;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 
@@ -20,18 +19,13 @@ public class Application {
     }
 
     @Singleton
-    public Module jacksonModule(NetworkParameters networkParameters) {
-        return new RpcServerModule(networkParameters);
+    public Module jacksonModule(JsonRpcProxyConfiguration config) {
+        return new RpcServerModule(config.getNetworkParameters());
     }
     
     @Singleton
-    public NetworkParameters networkParameters(JsonRpcProxyConfiguration config) {
-        return NetworkParameters.fromID(config.getNetworkId());
-    }
-
-    @Singleton
-    public RxBitcoinClient bitcoinClient(JsonRpcProxyConfiguration configuration, NetworkParameters networkParameters) {
-        var client = new RxBitcoinClient(networkParameters, configuration.getUri(), configuration.getUsername(), configuration.getPassword());
+    public RxBitcoinClient bitcoinClient(JsonRpcProxyConfiguration configuration) {
+        var client = new RxBitcoinClient(configuration);
         client.start();
         return client;
     }

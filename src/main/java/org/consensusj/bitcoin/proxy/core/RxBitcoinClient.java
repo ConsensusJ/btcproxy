@@ -1,7 +1,6 @@
 package org.consensusj.bitcoin.proxy.core;
 
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
-import com.msgilligan.bitcoinj.rpc.BitcoinClient;
 import foundation.omni.rpc.OmniClient;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
@@ -10,7 +9,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.internal.operators.observable.ObservableInterval;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-import org.bitcoinj.core.NetworkParameters;
+import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 import org.consensusj.jsonrpc.AsyncSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +29,8 @@ public class RxBitcoinClient extends OmniClient {
     // BehaviorProcessor will remember the last block received and pass it to new subscribers.
     private final Subject<ChainTip> chainTipSubject = BehaviorSubject.create();
 
-    public RxBitcoinClient(NetworkParameters netParams, URI server, String rpcuser, String rpcpassword) {
-        super(netParams, server, rpcuser, rpcpassword);
+    public RxBitcoinClient(JsonRpcProxyConfiguration config) {
+        super(config.getNetworkParameters(), config.getUri(), config.getUsername(), config.getPassword());
         this.interval = ObservableInterval.interval(2,10, TimeUnit.SECONDS);
     }
 

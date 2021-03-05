@@ -24,6 +24,11 @@ import java.util.List;
 @Factory
 public class OmniAnalysisFactory {
     @Singleton
+    public NetworkParameters networkParameters(JsonRpcProxyConfiguration config) {
+        return config.getNetworkParameters();
+    }
+
+    @Singleton
     public Module jacksonModule() {
         return new OmniServerModule();
     }

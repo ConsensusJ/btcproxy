@@ -16,12 +16,12 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         JsonRpcProxyConfiguration jsonRpcProxyConfiguration = ctx.getBean(JsonRpcProxyConfiguration)
 
         then:
-        jsonRpcProxyConfiguration.networkId         == 'org.bitcoin.production'
-        jsonRpcProxyConfiguration.uri.toString()    == 'http://localhost:8332'
-        jsonRpcProxyConfiguration.username          == 'rpcusername'
-        jsonRpcProxyConfiguration.password          == 'rpcpassword'
-        jsonRpcProxyConfiguration.allowList[0]      == 'getblockcount'
-        jsonRpcProxyConfiguration.allowList.size()  == 20
+        jsonRpcProxyConfiguration.networkParameters.getId() == 'org.bitcoin.production'
+        jsonRpcProxyConfiguration.uri.toString()            == 'http://localhost:8332'
+        jsonRpcProxyConfiguration.username                  == 'rpcusername'
+        jsonRpcProxyConfiguration.password                  == 'rpcpassword'
+        jsonRpcProxyConfiguration.allowList[0]              == 'getblockcount'
+        jsonRpcProxyConfiguration.allowList.size()          == 20
 
         cleanup:
         ctx.close()
@@ -41,11 +41,11 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         JsonRpcProxyConfiguration jsonRpcProxyConfiguration = ctx.getBean(JsonRpcProxyConfiguration)
 
         then:
-        jsonRpcProxyConfiguration.networkId       == 'org.bitcoin.regtest'
-        jsonRpcProxyConfiguration.uri.toString()    == 'http://localhost:9999'
-        jsonRpcProxyConfiguration.username          == 'Satoshi'
-        jsonRpcProxyConfiguration.password          == 'Nakamoto'
-        jsonRpcProxyConfiguration.allowList         == ['I', 'Shall', 'Not', 'Fear']
+        jsonRpcProxyConfiguration.networkParameters.getId() == 'org.bitcoin.regtest'
+        jsonRpcProxyConfiguration.uri.toString()            == 'http://localhost:9999'
+        jsonRpcProxyConfiguration.username                  == 'Satoshi'
+        jsonRpcProxyConfiguration.password                  == 'Nakamoto'
+        jsonRpcProxyConfiguration.allowList                 == ['I', 'Shall', 'Not', 'Fear']
 
         cleanup:
         ctx.close()
