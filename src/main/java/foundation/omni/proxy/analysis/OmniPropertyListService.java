@@ -148,7 +148,7 @@ public class OmniPropertyListService {
         } else if (info.getPropertyid().equals(CurrencyID.TOMNI)) {
             return !info.getTotaltokens().equals(OmniDivisibleValue.ZERO);
         } else {
-            return !info.getCreationtxid().equals(Sha256Hash.ZERO_HASH);
+            return info.getCreationtxid() != null;
         }
     }
 }
