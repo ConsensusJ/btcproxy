@@ -9,7 +9,9 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.internal.operators.observable.ObservableInterval;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.params.MainNetParams;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class OmniPropertyListService {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
-    private static final List<CurrencyID> activeProperties = List.of(CurrencyID.OMNI, CurrencyID.USDT);
+    private final List<CurrencyID> activeProperties;
     RxBitcoinClient rxOmniClient;
     private List<SmartPropertyListInfo> cachedPropertyList = new ArrayList<>();
     private Disposable chainTipSubscription;
@@ -38,11 +40,15 @@ public class OmniPropertyListService {
 
     private final Observable<Long> loadPollingInterval;
 
-    OmniPropertyListService(RxBitcoinClient rxBitcoinClient) {
+    OmniPropertyListService(NetworkParameters netParams, RxBitcoinClient rxBitcoinClient) {
         // RxBitcoinClient is currently an Omni client too!
         rxOmniClient = rxBitcoinClient;
         loadPollingInterval = ObservableInterval.interval(5,5, TimeUnit.SECONDS);
-
+        if (netParams.getId().equals(MainNetParams.ID_MAINNET)) {
+            activeProperties = List.of(CurrencyID.OMNI, CurrencyID.USDT);
+        } else {
+            activeProperties = List.of(CurrencyID.OMNI, CurrencyID.TOMNI);
+        }
     }
 
     public synchronized void start() {

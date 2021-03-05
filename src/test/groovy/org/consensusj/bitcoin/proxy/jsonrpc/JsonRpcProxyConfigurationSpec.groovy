@@ -16,6 +16,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         JsonRpcProxyConfiguration jsonRpcProxyConfiguration = ctx.getBean(JsonRpcProxyConfiguration)
 
         then:
+        jsonRpcProxyConfiguration.networkId         == 'org.bitcoin.production'
         jsonRpcProxyConfiguration.uri.toString()    == 'http://localhost:8332'
         jsonRpcProxyConfiguration.username          == 'rpcusername'
         jsonRpcProxyConfiguration.password          == 'rpcpassword'
@@ -29,6 +30,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
     void "test json-rpc proxy configuration"() {
         given:
         ApplicationContext ctx = ApplicationContext.run(ApplicationContext, [
+            'btcproxyd.rpcproxy.network-id': 'org.bitcoin.regtest',
             'btcproxyd.rpcproxy.uri': 'http://localhost:9999',
             'btcproxyd.rpcproxy.username': 'Satoshi',
             'btcproxyd.rpcproxy.password': 'Nakamoto',
@@ -39,6 +41,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         JsonRpcProxyConfiguration jsonRpcProxyConfiguration = ctx.getBean(JsonRpcProxyConfiguration)
 
         then:
+        jsonRpcProxyConfiguration.networkId       == 'org.bitcoin.regtest'
         jsonRpcProxyConfiguration.uri.toString()    == 'http://localhost:9999'
         jsonRpcProxyConfiguration.username          == 'Satoshi'
         jsonRpcProxyConfiguration.password          == 'Nakamoto'

@@ -10,6 +10,7 @@ micronaut:
 
 btcproxyd:
   rpcproxy:
+    network-id: org.bitcoin.production
     uri: http://localhost:8332
     username: rpcusername
     password: rpcpassword

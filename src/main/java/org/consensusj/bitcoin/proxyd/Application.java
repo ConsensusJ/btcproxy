@@ -2,11 +2,9 @@ package org.consensusj.bitcoin.proxyd;
 
 import com.fasterxml.jackson.databind.Module;
 import com.msgilligan.bitcoinj.json.conversion.RpcServerModule;
-import com.msgilligan.bitcoinj.rpc.BitcoinClient;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.MainNetParams;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 
@@ -25,10 +23,10 @@ public class Application {
     public Module jacksonModule(NetworkParameters networkParameters) {
         return new RpcServerModule(networkParameters);
     }
-
+    
     @Singleton
-    public NetworkParameters networkParameters() {
-        return MainNetParams.get();
+    public NetworkParameters networkParameters(JsonRpcProxyConfiguration config) {
+        return NetworkParameters.fromID(config.getNetworkId());
     }
 
     @Singleton
