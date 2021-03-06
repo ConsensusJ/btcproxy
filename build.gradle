@@ -43,6 +43,7 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
 
     implementation "com.msgilligan:cj-btc-jsonrpc:${consensusjVersion}"
+    implementation "com.msgilligan:cj-btc-zeromq:${consensusjVersion}"
 
     implementation "foundation.omni:omnij-analytics:${omnijVersion}"
     implementation "foundation.omni:omnij-jsonrpc:${omnijVersion}"

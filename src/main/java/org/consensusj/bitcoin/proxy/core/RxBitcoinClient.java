@@ -2,99 +2,77 @@ package org.consensusj.bitcoin.proxy.core;
 
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import foundation.omni.rpc.OmniClient;
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.internal.operators.observable.ObservableInterval;
-import io.reactivex.rxjava3.subjects.BehaviorSubject;
-import io.reactivex.rxjava3.subjects.Subject;
+import io.reactivex.rxjava3.processors.BehaviorProcessor;
+import io.reactivex.rxjava3.processors.FlowableProcessor;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
-import org.consensusj.jsonrpc.AsyncSupport;
+import org.consensusj.bitcoin.zeromq.RxBitcoinJsonRpcClient;
+import org.consensusj.bitcoin.zeromq.RxBitcoinZmqService;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import java.io.IOError;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 /**
  * RxJava subclass of BitcoinClient, that internally polls for new blocks
  */
-public class RxBitcoinClient extends OmniClient {
+public class RxBitcoinClient extends OmniClient implements RxBitcoinJsonRpcClient {
     private static final Logger log = LoggerFactory.getLogger(RxBitcoinClient.class);
     private final Observable<Long> interval;
+    private final Flowable<ChainTip> chainTipSource;
     private Disposable chainTipSubscription;
-    // BehaviorProcessor will remember the last block received and pass it to new subscribers.
-    private final Subject<ChainTip> chainTipSubject = BehaviorSubject.create();
+    // How will we properly use backpressure here?
+    private final FlowableProcessor<ChainTip> chainTipProcessor = BehaviorProcessor.create();
 
     public RxBitcoinClient(JsonRpcProxyConfiguration config) {
         super(config.getNetworkParameters(), config.getUri(), config.getUsername(), config.getPassword());
-        this.interval = ObservableInterval.interval(2,10, TimeUnit.SECONDS);
+        RxBitcoinZmqService zmqService;
+        if (config.getUseZmq()) {
+            // TODO: Eliminate the construction of a second BitcoinClient that is happening here!!
+            log.info("Constructing (ZMQ version)...");
+            zmqService = new RxBitcoinZmqService(config.getNetworkParameters(), config.getUri(), config.getUsername(), config.getPassword());
+            interval = null;
+            chainTipSource = zmqService.chainTipPublisher();
+        } else {
+            log.info("Constructing (polling version)...");
+            interval = ObservableInterval.interval(2,10, TimeUnit.SECONDS);
+            chainTipSource = pollForDistinctChainTip();
+        }
     }
 
     @PostConstruct
     public synchronized void start() {
         if (chainTipSubscription == null) {
-            log.info("Starting...");
-            chainTipSubscription = pollForDistinctChainTip()
-                    .subscribe(chainTipSubject::onNext, chainTipSubject::onError, chainTipSubject::onComplete);
+            chainTipSubscription = chainTipSource.subscribe(chainTipProcessor::onNext, chainTipProcessor::onError, chainTipProcessor::onComplete);
         }
     }
 
     /**
-     * This method will give you a stream of ChainTips
+     * Return an observable for ChainTip. 
      *
      * @return An Observable for the sequence
      */
-    public Observable<ChainTip> chainTipService() {
-        return chainTipSubject;
+    @Override
+    public Publisher<ChainTip> chainTipService() {
+        return chainTipProcessor;
     }
     
-    /**
-     * Poll a method, ignoring {@link IOError}.
-     * The returned {@link Maybe} will:
-     * <ol>
-     *     <li>Emit a value if successful</li>
-     *     <li>Empty Complete on IOError</li>
-     *     <li>Error out if any other Exception occurs</li>
-     * </ol>
-     *
-     * @param method A supplier (should be an RPC Method) that can throw {@link Exception}.
-     * @param <RSLT> The type of the expected result
-     * @return A Maybe for the expected result type
-     */
-    public <RSLT> Maybe<RSLT> pollOnce(AsyncSupport.ThrowingSupplier<RSLT> method) {
-        return Single.defer(() -> Single.fromCompletionStage(this.supplyAsync(method)))
-                .doOnSuccess(r -> log.debug("RPC call returned: {}", r))
-                .doOnError(t -> log.error("Exception in RPCCall", t))
-                .toMaybe()
-                .onErrorComplete(t -> t instanceof IOError);    // Empty completion if IOError
-    }
-
-    public <RSLT> Single<RSLT> call(AsyncSupport.ThrowingSupplier<RSLT> method) {
-        return Single.defer(() -> Single.fromCompletionStage(this.supplyAsync(method)));
-    }
-
-    /**
-     * Poll a method, repeatedly once-per-new-block
-     *
-     * @param method A supplier (should be an RPC Method) that can throw {@link Exception}.
-     * @param <RSLT> The type of the expected result
-     * @return An Observable for the expected result type, so we can expect one call to {@code onNext} per block.
-     */
-    public <RSLT> Observable<RSLT> pollOnNewBlock(AsyncSupport.ThrowingSupplier<RSLT> method) {
-        return chainTipSubject.flatMapMaybe(tip -> pollOnce(method));
-    }
-
-    private Observable<ChainTip> pollForDistinctChainTip() {
+    private Flowable<ChainTip> pollForDistinctChainTip() {
         return interval
                 .doOnNext(t -> log.debug("got interval"))
                 .flatMapMaybe(t -> this.currentChainTipMaybe())
                 .doOnNext(tip -> log.debug("blockheight, blockhash = {}, {}", tip.getHeight(), tip.getHash()))
                 .distinctUntilChanged(ChainTip::getHash)
-                .doOnNext(tip -> log.info("** NEW ** blockheight, blockhash = {}, {}", tip.getHeight(), tip.getHash()));
+                .doOnNext(tip -> log.info("** NEW ** blockheight, blockhash = {}, {}", tip.getHeight(), tip.getHash()))
+                // ERROR backpressure strategy is compatible with BehaviorProcessor since it subscribes to MAX items
+                .toFlowable(BackpressureStrategy.ERROR);
     }
 
     private Maybe<ChainTip> currentChainTipMaybe() {

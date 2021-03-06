@@ -5,6 +5,7 @@ import foundation.omni.CurrencyID;
 import foundation.omni.OmniDivisibleValue;
 import foundation.omni.json.pojo.OmniPropertyInfo;
 import foundation.omni.rpc.SmartPropertyListInfo;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -54,7 +55,7 @@ public class OmniPropertyListService {
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = rxOmniClient.chainTipService().subscribe(this::onNewBlock, this::onError);
+            chainTipSubscription = Flowable.fromPublisher(rxOmniClient.chainTipService()).subscribe(this::onNewBlock, this::onError);
         }
         if (intervalSubscription == null) {
             intervalSubscription = loadPollingInterval.subscribe(i -> loadProperties(), this::onError);

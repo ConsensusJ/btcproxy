@@ -1,6 +1,7 @@
 package foundation.omni.proxy.analysis;
 
 import com.fasterxml.jackson.databind.Module;
+import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
 import foundation.omni.analytics.OmniLayerRichListService;
@@ -9,6 +10,8 @@ import foundation.omni.netapi.ConsensusService;
 import foundation.omni.netapi.omnicore.OmniCoreClient;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
@@ -43,7 +46,7 @@ public class OmniAnalysisFactory {
     public CachedRichListService<OmniValue, CurrencyID> omniRichListService(NetworkParameters netParams, ConsensusService client, RxBitcoinClient rxBitcoinClient) {
         List<CurrencyID> richListEagerFetch  = netParams.getId().equals(MainNetParams.ID_MAINNET)
                 ? List.of(CurrencyID.USDT) : List.of(CurrencyID.OMNI);
-        var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client, rxBitcoinClient.chainTipService());
+        var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client, Observable.fromPublisher(rxBitcoinClient.chainTipService()));
         var cached = new CachedRichListService<>(uncached, rxBitcoinClient, richListEagerFetch);
         cached.start();
         return cached;

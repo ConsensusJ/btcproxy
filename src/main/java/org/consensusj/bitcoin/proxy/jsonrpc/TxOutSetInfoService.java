@@ -2,12 +2,13 @@ package org.consensusj.bitcoin.proxy.jsonrpc;
 
 import com.msgilligan.bitcoinj.json.pojo.TxOutSetInfo;
 import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.subjects.BehaviorSubject;
-import io.reactivex.rxjava3.subjects.Subject;
+import io.reactivex.rxjava3.processors.BehaviorProcessor;
+import io.reactivex.rxjava3.processors.FlowableProcessor;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import javax.inject.Singleton;
 //@Singleton
 public class TxOutSetInfoService extends Observable<TxOutSetInfo> {
     private static final Logger log = LoggerFactory.getLogger(TxOutSetInfoService.class);
-    private final Subject<TxOutSetInfo> txOutSetInfoSubject = BehaviorSubject.create();
+    private final FlowableProcessor<TxOutSetInfo> txOutSetInfoSubject = BehaviorProcessor.create();
     private Disposable subscription;
     private final RxBitcoinClient jsonRpc;
 
@@ -35,14 +36,14 @@ public class TxOutSetInfoService extends Observable<TxOutSetInfo> {
     }
 
     public Single<TxOutSetInfo> latest() {
-        return Single.fromObservable(txOutSetInfoSubject.take(1));
+        return Single.fromPublisher(txOutSetInfoSubject.take(1));
     }
 
     @PostConstruct
     private synchronized void start() {
         if (subscription == null) {
             log.info("subscribing to chainTipService");
-            subscription = jsonRpc.pollOnNewBlock(jsonRpc::getTxOutSetInfo)
+            subscription = Flowable.fromPublisher(jsonRpc.pollOnNewBlock(jsonRpc::getTxOutSetInfo))
                     .subscribe(txOutSetInfoSubject::onNext, txOutSetInfoSubject::onError, txOutSetInfoSubject::onComplete);
         }
     }
@@ -50,6 +51,6 @@ public class TxOutSetInfoService extends Observable<TxOutSetInfo> {
     @Override
     protected void subscribeActual(@NonNull Observer<? super TxOutSetInfo> observer) {
         start();
-        txOutSetInfoSubject.subscribe(observer);
+        txOutSetInfoSubject.toObservable().subscribe(observer);
     }
 }

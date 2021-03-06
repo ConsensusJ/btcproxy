@@ -18,6 +18,7 @@ public class JsonRpcProxyConfiguration {
     private final URI uri;
     private final String username;
     private final String password;
+    private final boolean useZmq;
     private final List<String> allowList;
 
     /**
@@ -34,6 +35,7 @@ public class JsonRpcProxyConfiguration {
                                      URI uri,
                                      String username,
                                      String password,
+                                     boolean useZmq,
                                      List<String> allowList) {
         networkParameters = NetworkParameters.fromID(networkId);
         if (networkParameters == null) {
@@ -42,6 +44,7 @@ public class JsonRpcProxyConfiguration {
         this.uri = uri;
         this.username = username;
         this.password = password;
+        this.useZmq = useZmq;
         this.allowList = allowList;
     }
 
@@ -59,6 +62,10 @@ public class JsonRpcProxyConfiguration {
 
     public String getPassword() {
         return password;
+    }
+
+    public boolean getUseZmq() {
+        return useZmq;
     }
 
     public List<String> getAllowList() {

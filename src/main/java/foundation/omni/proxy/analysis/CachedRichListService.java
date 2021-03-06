@@ -3,6 +3,7 @@ package foundation.omni.proxy.analysis;
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -38,7 +39,7 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = jsonRpc.chainTipService().subscribe(this::onNewBlock, this::onError);
+            chainTipSubscription = Flowable.fromPublisher(jsonRpc.chainTipService()).subscribe(this::onNewBlock, this::onError);
         }
     }
 
