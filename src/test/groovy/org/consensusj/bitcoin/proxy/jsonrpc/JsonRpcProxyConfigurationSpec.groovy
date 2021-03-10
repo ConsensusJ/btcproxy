@@ -1,11 +1,13 @@
 package org.consensusj.bitcoin.proxy.jsonrpc
 
 import io.micronaut.context.ApplicationContext
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
  *
  */
+@Ignore("ApplicationContext.run(ApplicationContext) makes this effecively a functional spec")
 class JsonRpcProxyConfigurationSpec extends Specification {
 
     void "test default json-rpc proxy configuration"() {
