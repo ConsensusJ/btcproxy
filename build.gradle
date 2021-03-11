@@ -31,6 +31,9 @@ micronaut {
         incremental(true)
         annotations("org.consensusj.bitcoin.proxyd.*")
     }
+    nativeImage {
+        imageName('btcproxyd')
+    }
 }
 
 dependencies {
