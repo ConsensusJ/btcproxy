@@ -5,6 +5,7 @@ import foundation.omni.CurrencyID;
 import foundation.omni.OmniDivisibleValue;
 import foundation.omni.json.pojo.OmniPropertyInfo;
 import foundation.omni.rpc.SmartPropertyListInfo;
+import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  *
  */
 @Singleton
+@Requires(property="omniproxyd.enabled", value = "true")
 public class OmniPropertyListService {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
     private final List<CurrencyID> activeProperties;

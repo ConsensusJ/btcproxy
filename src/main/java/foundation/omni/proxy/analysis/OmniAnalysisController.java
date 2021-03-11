@@ -2,6 +2,7 @@ package foundation.omni.proxy.analysis;
 
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -13,9 +14,9 @@ import org.consensusj.analytics.service.TokenRichList;
  * Simple controller to expose REST API for an Omni rich list.
  */
 @Controller("/omni/analysis")
+@Requires(property="omniproxyd.enabled", value = "true")
 public class OmniAnalysisController {
     private final int richListSize = 12;
-
     private final RichListService<OmniValue, CurrencyID> richListService;
 
     public OmniAnalysisController(RichListService<OmniValue, CurrencyID> richListService, OmniAnalysisService omniAnalysisService) {

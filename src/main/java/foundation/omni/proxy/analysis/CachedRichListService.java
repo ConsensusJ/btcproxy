@@ -3,6 +3,7 @@ package foundation.omni.proxy.analysis;
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
+import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Caching wrapper for RichListService
  */
+@Requires(property="omniproxyd.enabled", value = "true")
 public class CachedRichListService<N extends Number & Comparable<? super N>, ID> implements RichListService<N, ID> {
     private static final Logger log = LoggerFactory.getLogger(CachedRichListService.class);
     private final RichListService<N, ID> uncachedService;

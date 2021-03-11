@@ -37,3 +37,5 @@ btcproxyd:
       - getnettotals
       - getnetworkinfo
 
+omniproxyd:
+  enabled: false

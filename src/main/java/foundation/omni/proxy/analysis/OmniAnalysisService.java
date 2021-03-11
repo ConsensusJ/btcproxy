@@ -3,6 +3,7 @@ package foundation.omni.proxy.analysis;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
 import io.micronaut.context.annotation.Context;
+import io.micronaut.context.annotation.Requires;
 import org.consensusj.analytics.service.RichListService;
 import org.consensusj.bitcoin.proxy.jsonrpc.ExtraRpcRegistry;
 
@@ -13,6 +14,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 @Context
+@Requires(property="omniproxyd.enabled", value = "true")
 public class OmniAnalysisService {
     private final ExtraRpcRegistry rpcRegistry;
     private final CachedRichListService<OmniValue, CurrencyID> richListService;

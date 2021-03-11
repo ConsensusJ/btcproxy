@@ -1,7 +1,6 @@
 package foundation.omni.proxy.analysis;
 
 import com.fasterxml.jackson.databind.Module;
-import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
 import foundation.omni.analytics.OmniLayerRichListService;
@@ -10,7 +9,7 @@ import foundation.omni.netapi.ConsensusService;
 import foundation.omni.netapi.omnicore.OmniCoreClient;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
-import io.reactivex.rxjava3.core.Flowable;
+import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Observable;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
@@ -25,7 +24,9 @@ import java.util.List;
  * for {@link OmniAnalysisController}.
  */
 @Factory
+@Requires(property="omniproxyd.enabled", value = "true")
 public class OmniAnalysisFactory {
+
     @Singleton
     public NetworkParameters networkParameters(JsonRpcProxyConfiguration config) {
         return config.getNetworkParameters();
