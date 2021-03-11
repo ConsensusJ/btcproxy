@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class CachedRpcService {
     private static final Logger log = LoggerFactory.getLogger(CachedRpcService.class);
-    private final Set<String> cached = Set.of("getchaintips", "getblockcount", "getblockchaininfo", "getbestblockhash");
+    private final Set<String> cached = Set.of("getchaintips", "getblockcount", "getblockchaininfo", "getbestblockhash", "gettxoutsetinfo");
     private final ConcurrentHashMap<String, Single<Object>> cache = new ConcurrentHashMap<>();
     private final RxBitcoinClient rxBitcoinClient;
     private Disposable chainTipSubscription;
