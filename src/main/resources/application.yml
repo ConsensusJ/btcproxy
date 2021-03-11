@@ -14,7 +14,7 @@ btcproxyd:
     uri: http://localhost:8332
     username: rpcusername
     password: rpcpassword
-    use-zmq: true
+    use-zmq: false
     allow-list:
       - getblockcount
       - getbestblockhash
