@@ -5,6 +5,11 @@
     "allPublicConstructors" : true
   },
   {
+    "name" : "com.msgilligan.bitcoinj.json.pojo.ZmqNotification",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
     "name" : "foundation.omni.json.pojo.OmniPropertyInfo",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
