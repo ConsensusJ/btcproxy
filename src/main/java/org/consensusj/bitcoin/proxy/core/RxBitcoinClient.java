@@ -35,9 +35,8 @@ public class RxBitcoinClient extends OmniClient implements RxBitcoinJsonRpcClien
         super(config.getNetworkParameters(), config.getUri(), config.getUsername(), config.getPassword());
         RxBitcoinZmqService zmqService;
         if (config.getUseZmq()) {
-            // TODO: Eliminate the construction of a second BitcoinClient that is happening here!!
             log.info("Constructing (ZMQ version)...");
-            zmqService = new RxBitcoinZmqService(config.getNetworkParameters(), config.getUri(), config.getUsername(), config.getPassword());
+            zmqService = new RxBitcoinZmqService(this);
             interval = null;
             chainTipSource = zmqService.chainTipPublisher();
         } else {

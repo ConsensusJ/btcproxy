@@ -37,24 +37,24 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
 
     private final HttpClient client;
     private final ExtraRpcRegistry extraRpcRegistry;
-    private final TxOutSetInfoService txOutSetInfoService;
+    private final CachedRpcService cachedRpcService;
     private final URI remoteRpcUri;
     private final String remoteRpcUser;
     private final String remoteRpcPass;
 
     public RxBitcoinJsonRpcProxyService(HttpClient httpClient,
                                         ExtraRpcRegistry extraRpcRegistry,
-                                        /*TxOutSetInfoService txOutSetInfoService,*/
+                                        CachedRpcService cachedRpcService,
                                         ObjectMapper jsonMapper,
                                         JsonRpcProxyConfiguration config) {
         client = httpClient;
         this.extraRpcRegistry = extraRpcRegistry;
+        this.cachedRpcService = cachedRpcService;
         mapper = jsonMapper;
         remoteRpcUri = config.getUri();
         remoteRpcUser = config.getUsername();
         remoteRpcPass = config.getPassword();
         optionalAllowList = Optional.of(config.getAllowList());
-        this.txOutSetInfoService = null; //txOutSetInfoService;
         log.info("btcproxyd.rpc.uri: {}", remoteRpcUri);
     }
 
@@ -110,16 +110,11 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     }
 
     private boolean isCached(JsonRpcRequest request) {
-        // Currently only one method is cached
-        //return request.getMethod().equals("gettxoutsetinfo");
-        // Currently nothing is cached.
-        return false;
+        return cachedRpcService.isCached(request);
     }
 
     private Single<JsonRpcResponse<?>> callCached(JsonRpcRequest request) {
-        // Currently only  "gettxoutsetinfo" is cached
-        return txOutSetInfoService.latest()
-                .map(result -> responseFromResult(request, result));
+        return cachedRpcService.callCached(request);
     }
 
     private static <RSLT> JsonRpcResponse<RSLT> responseFromResult(JsonRpcRequest request, RSLT result) {

@@ -7,7 +7,7 @@ import spock.lang.Specification
 /**
  *
  */
-@Ignore("ApplicationContext.run(ApplicationContext) makes this effecively a functional spec")
+@Ignore("ApplicationContext.run(ApplicationContext) makes this effectively a functional spec")
 class JsonRpcProxyConfigurationSpec extends Specification {
 
     void "test default json-rpc proxy configuration"() {

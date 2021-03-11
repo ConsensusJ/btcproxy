@@ -33,11 +33,11 @@ public class OmniPropertyListService {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
     private final List<CurrencyID> activeProperties;
     RxBitcoinClient rxOmniClient;
-    private List<SmartPropertyListInfo> cachedPropertyList = new ArrayList<>();
+    private final List<SmartPropertyListInfo> cachedPropertyList = new ArrayList<>();
     private Disposable chainTipSubscription;
     private Disposable intervalSubscription;
 
-    private ConcurrentHashMap<CurrencyID, OmniPropertyInfo> cachedPropertyInfo = new ConcurrentHashMap<>(2000);
+    private final ConcurrentHashMap<CurrencyID, OmniPropertyInfo> cachedPropertyInfo = new ConcurrentHashMap<>(2000);
 
     private final Observable<Long> loadPollingInterval;
 
@@ -80,7 +80,7 @@ public class OmniPropertyListService {
      * @param tip the new ChainTip (currently unused)
      */
     private void onNewBlock(ChainTip tip) {
-        log.info("New Block: {}/{}", tip.getHeight(), tip.getHash());
+        log.info("New Block -- updating CurrencyIDs on the eager list and fetching any new properties created");
         updateActiveProperties();
         // TODO: Find changed properties in the block
         handleNewProperties();
@@ -111,10 +111,10 @@ public class OmniPropertyListService {
     private void onListProperties(List<SmartPropertyListInfo> list) {
         final int perBlockNewFetch = 5;
         List<CurrencyID> newProperties = new ArrayList<>();
-        list.forEach(info -> {
-            if (!cachedPropertyInfo.containsKey(info.getPropertyid())) {
-                newProperties.add(info.getPropertyid());
-                cachedPropertyInfo.put(info.getPropertyid(), new OmniPropertyInfo(info));
+        list.forEach(splInfo -> {
+            if (!cachedPropertyInfo.containsKey(splInfo.getPropertyid())) {
+                newProperties.add(splInfo.getPropertyid());
+                cachedPropertyInfo.put(splInfo.getPropertyid(), new OmniPropertyInfo(splInfo));
             }
         });
         // Fetch up to perBlockNewFetch new properties per block

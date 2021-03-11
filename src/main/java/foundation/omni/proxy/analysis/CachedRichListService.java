@@ -65,7 +65,7 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
      * @param tip the new ChainTip (currently unused)
      */
     private void onNewBlock(ChainTip tip) {
-        log.info("New Block: {}/{}", tip.getHeight(), tip.getHash());
+        log.info("New Block: clearing cache & starting eager fetch");
         cache.clear();
         eager.forEach(id -> {
             this.fetch(id).subscribe((r) -> {} , this::onError);
