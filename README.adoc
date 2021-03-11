@@ -12,3 +12,5 @@ v0.1
 image:https://github.com/ConsensusJ/btc-proxyd/workflows/GraalVM%20CE%20CI/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions"]
 
 Work-in-progress on a JSON-RPC proxy daemon for https://bitcoin.org/en/bitcoin-core/[bitcoind].  Stay tuned.
+
+Docker image available at https://hub.docker.com/repository/docker/consensusj/btcproxyd[consensusj/btcproxyd].
