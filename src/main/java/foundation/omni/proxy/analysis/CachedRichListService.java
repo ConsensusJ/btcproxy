@@ -15,12 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Caching wrapper for RichListService
  */
+@Singleton
 @Requires(property="omniproxyd.enabled", value = "true")
 public class CachedRichListService<N extends Number & Comparable<? super N>, ID> implements RichListService<N, ID> {
     private static final Logger log = LoggerFactory.getLogger(CachedRichListService.class);
