@@ -28,7 +28,7 @@ public class OmniAnalysisService {
         this.propertyListService = propertyListService;
         cachedRichListService.start();
         propertyListService.start();
-        rpcRegistry.register("omniproxy.getrichlist", params -> richListService.richList(toCurrencyId(params.get(0)), (int) params.get(1)));
+        rpcRegistry.register("omniproxy.getrichlist", params -> richListService.richList(toCurrencyId(params.get(0)), parmToInt(params.get(1))));
         rpcRegistry.register("omniproxy.listproperties", params -> propertyListService.getProperties());
         rpcRegistry.register("omniproxy.getproperty", params -> propertyListService.getProperty(toCurrencyId(params.get(0))));
     }
@@ -45,5 +45,15 @@ public class OmniAnalysisService {
             throw new IllegalArgumentException("can't covert to CurrencyID");
         }
         return CurrencyID.of(id);
+    }
+
+    private static int parmToInt(Object param) {
+        int result;
+        if (param instanceof Number) {
+            result = ((Number) param).intValue();
+        } else {
+            throw new IllegalArgumentException("can't covert to integer");
+        }
+        return result;
     }
 }
