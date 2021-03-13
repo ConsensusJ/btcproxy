@@ -11,15 +11,12 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.internal.operators.observable.ObservableInterval;
-import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.params.MainNetParams;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,11 +40,11 @@ public class OmniPropertyListService {
 
     private final Observable<Long> loadPollingInterval;
 
-    OmniPropertyListService(NetworkParameters netParams, RxBitcoinClient rxBitcoinClient) {
+    OmniPropertyListService(RxBitcoinClient rxBitcoinClient) {
         // RxBitcoinClient is currently an Omni client too!
         rxOmniClient = rxBitcoinClient;
         loadPollingInterval = ObservableInterval.interval(5,5, TimeUnit.SECONDS);
-        if (netParams.getId().equals(MainNetParams.ID_MAINNET)) {
+        if (rxBitcoinClient.getNetParams().getId().equals(MainNetParams.ID_MAINNET)) {
             activeProperties = List.of(CurrencyID.OMNI, CurrencyID.USDT);
         } else {
             activeProperties = List.of(CurrencyID.OMNI, CurrencyID.TOMNI);

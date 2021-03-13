@@ -1,9 +1,6 @@
 package foundation.omni.proxy.analysis;
 
 import com.msgilligan.bitcoinj.json.pojo.ChainTip;
-import foundation.omni.CurrencyID;
-import foundation.omni.OmniValue;
-import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -14,16 +11,13 @@ import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Caching wrapper for RichListService
+ * Caching wrapper for RichListService.
+ * This should not be a Singleton, (for now) it must be constructed in {@link OmniAnalysisFactory}
  */
-//@Singleton
-//@Requires(property="omniproxyd.enabled", value = "true")
 public class CachedRichListService<N extends Number & Comparable<? super N>, ID> implements RichListService<N, ID> {
     private static final Logger log = LoggerFactory.getLogger(CachedRichListService.class);
     private final RichListService<N, ID> uncachedService;
@@ -39,7 +33,6 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
         this.eager = eager;
     }
 
-    @PostConstruct
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");

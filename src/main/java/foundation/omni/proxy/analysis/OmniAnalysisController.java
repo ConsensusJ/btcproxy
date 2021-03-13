@@ -19,7 +19,7 @@ public class OmniAnalysisController {
     private final int richListSize = 12;
     private final RichListService<OmniValue, CurrencyID> richListService;
 
-    public OmniAnalysisController(RichListService<OmniValue, CurrencyID> richListService, OmniAnalysisService omniAnalysisService) {
+    public OmniAnalysisController(CachedRichListService<OmniValue, CurrencyID> richListService) {
         this.richListService = richListService;
     }
 

@@ -6,11 +6,14 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
 import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 
 @Factory
 public class Application {
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
     public static void main(String[] args) {
         Micronaut.build(args)
                 .banner(false)
