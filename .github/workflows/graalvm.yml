@@ -16,7 +16,7 @@ jobs:
       - name: Setup GraalVM CE
         uses: DeLaGuardo/setup-graalvm@3.1
         with:
-          graalvm-version: 21.0.0.java11
+          graalvm-version: 21.0.0.2.java11
       - name: Install Native Image
         run: gu install native-image
       - name: Docker login
