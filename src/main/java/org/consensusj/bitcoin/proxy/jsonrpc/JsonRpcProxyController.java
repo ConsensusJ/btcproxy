@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Micronaut controller for proxying JSON-RPC requests to a remote JSON-RPC server.
  */
-@Controller("/jsonrpc")
+@Controller("/")
 public class JsonRpcProxyController {
     private static final Logger log = LoggerFactory.getLogger(JsonRpcProxyController.class);
     private final RxJsonRpcProxyService jsonRpcProxyService;
@@ -39,7 +39,7 @@ public class JsonRpcProxyController {
      * @param request The incoming JSON-RPC request
      * @return A Publisher that will resolve to the response from the remote server.
      */
-    @Post(uri="/", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public Publisher<HttpResponse<String>> rpcProxy(@Body JsonRpcRequest request) {
         return jsonRpcProxyService.rpcProxy(request);
     }

@@ -9,7 +9,7 @@ import org.consensusj.bitcoin.proxy.jsonrpc.ExtraRpcRegistry;
 import javax.inject.Singleton;
 
 /**
- *
+ * Service that combines Omni rich list and property list and makes available as "extra" RPCs
  */
 @Singleton
 @Context
@@ -50,6 +50,12 @@ public class OmniAnalysisService {
         int result;
         if (param instanceof Number) {
             result = ((Number) param).intValue();
+        } else if (param instanceof String) {
+            try {
+                result = Integer.parseInt((String) param);
+            } catch (NumberFormatException e) {
+                throw e;
+            }
         } else {
             throw new IllegalArgumentException("can't covert to integer");
         }
