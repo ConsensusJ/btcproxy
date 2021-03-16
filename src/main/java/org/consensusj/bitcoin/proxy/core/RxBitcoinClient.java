@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -76,6 +78,11 @@ public class RxBitcoinClient extends OmniClient implements RxBitcoinJsonRpcClien
 
     private Maybe<ChainTip> currentChainTipMaybe() {
         return pollOnce(this::getChainTips)
-                .map(l -> l.get(0));
+                .mapOptional(this::getActiveChainTip);
     }
+
+    private Optional<ChainTip> getActiveChainTip(List<ChainTip> chainTips) {
+        return chainTips.stream().filter(tip -> tip.getStatus().equals("active")).findFirst();
+    }
+
 }
