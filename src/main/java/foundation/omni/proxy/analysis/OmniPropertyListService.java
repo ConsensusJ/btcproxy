@@ -141,11 +141,12 @@ public class OmniPropertyListService {
         loadList.forEach(this::updatePropertyAsync);
     }
 
-    public static boolean isLoaded(OmniPropertyInfo info) {
+    private static boolean isLoaded(OmniPropertyInfo info) {
         // All tokens besides OMNI and TOMNI must have a creationTxId
         if (info.getPropertyid().equals(CurrencyID.OMNI)) {
             return !info.getTotaltokens().equals(OmniDivisibleValue.ZERO);
         } else if (info.getPropertyid().equals(CurrencyID.TOMNI)) {
+            // We don't have a good test for TOMNI that works on a syncing mainnet, totalTokens stays zero until the exodus block it seems??
             return !info.getTotaltokens().equals(OmniDivisibleValue.ZERO);
         } else {
             return info.getCreationtxid() != null;
