@@ -21,9 +21,8 @@ repositories {
         mavenLocal()
     }
     mavenCentral()
-    maven { url 'https://dl.bintray.com/msgilligan/maven' } // consensusj (RPC client) (will move)
-    maven { url 'https://dl.bintray.com/consensusj/maven' }
-    maven { url 'https://dl.bintray.com/omni/maven' }       // OmniJ (RPC client)
+    maven { url 'https://gitlab.com/api/v4/projects/8482916/packages/maven' }  // ConsensusJ/consensusj
+    maven { url 'https://gitlab.com/api/v4/projects/26583853/packages/maven' }  // OmniJ
 }
 
 micronaut {
