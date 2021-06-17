@@ -118,7 +118,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     }
 
     private static <RSLT> JsonRpcResponse<RSLT> responseFromResult(JsonRpcRequest request, RSLT result) {
-        return new JsonRpcResponse<>(result, null, request.getJsonrpc(), request.getId());
+        return new JsonRpcResponse<>(request, result);
     }
 
     /**
@@ -197,7 +197,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
 
 
     private HttpResponse<String> makeErrorResponse(JsonRpcRequest request) {
-        JsonRpcResponse<Void> jsonResponse = new JsonRpcResponse<>(null, notFoundError, request.getJsonrpc(), request.getId());
+        JsonRpcResponse<Void> jsonResponse = new JsonRpcResponse<>(request, notFoundError);
         String body;
         try {
             body = mapper.writeValueAsString(jsonResponse);
