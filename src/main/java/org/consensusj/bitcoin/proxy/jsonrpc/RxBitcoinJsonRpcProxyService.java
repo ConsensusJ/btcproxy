@@ -69,11 +69,10 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
     @Override
     public Publisher<HttpResponse<String>> rpcProxy(JsonRpcRequest request) {
         if (methodPermitted(request)) {
-            log.info("method permitted: {}", request.getMethod());
+            log.trace("method permitted: {}", request.getMethod());
             if (extraRpcRegistry.isExtraRpcMethod(request.getMethod())) {
                 return renderResult(request, extraRpcRegistry.invoke(request));
             } else if (isCached(request)) {
-                // If a cached method, for now this is turned off
                 return renderResponse(callCached(request));
             } else {
                 // Make a remote call and return unprocessed result

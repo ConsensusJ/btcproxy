@@ -77,7 +77,7 @@ public class CachedRpcService {
                     .cache();
         })
         .doOnError(t -> log.error("Error reading from richList cache", t))
-        .doOnSuccess(r -> log.info("pulled from cache {}", r));
+        .doOnSuccess(r -> log.debug("pulled from cache {}", r));
     }
 
     private static <RSLT> JsonRpcResponse<RSLT> responseFromResult(JsonRpcRequest request, RSLT result) {
