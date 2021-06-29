@@ -4,9 +4,14 @@ micronaut:
   http:
     client:
       read-timeout: 300s
-  ssl:
-    enabled: false
-    buildSelfSigned: false
+  server:
+    ssl:
+      enabled: false
+      buildSelfSigned: false
+
+acme:
+  enabled: false
+  tos-agree: false
 
 btcproxyd:
   rpcproxy:
