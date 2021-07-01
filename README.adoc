@@ -9,8 +9,11 @@ v0.1
 :caution-caption: :fire:
 :warning-caption: :warning:
 
-image:https://github.com/ConsensusJ/btc-proxyd/workflows/GraalVM%20CE%20CI/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions"]
+image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/gradle.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/gradle.yml"] image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/graalvm.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/graalvm.yml"]
 
 Work-in-progress on a JSON-RPC proxy daemon for https://bitcoin.org/en/bitcoin-core/[bitcoind].  Stay tuned.
 
-Docker image available at https://hub.docker.com/repository/docker/consensusj/btcproxyd[consensusj/btcproxyd].
+Docker images available at:
+
+* https://hub.docker.com/repository/docker/consensusj/btcproxyd[consensusj/btcproxyd] (Native version)
+* https://hub.docker.com/repository/docker/consensusj/btcproxyd-jit[consensusj/btcproxyd-jit] (Java/JVM/JIT version).
