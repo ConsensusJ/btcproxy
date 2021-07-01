@@ -71,6 +71,12 @@ test {
     environment(['MICRONAUT_CONFIG_FILES':''])
 }
 
+nativeImage {
+    args = [
+        '--initialize-at-run-time=io.netty.handler.ssl.OpenSsl,io.netty.handler.ssl.OpenSslPrivateKeyMethod,io.netty.internal.tcnative.CertificateVerifier,io.netty.internal.tcnative.SSL,io.netty.internal.tcnative.SSLPrivateKeyMethod'
+    ]
+}
+
 dockerBuild {
     images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
 }
