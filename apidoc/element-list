@@ -1,0 +1,4 @@
+foundation.omni.proxy.analysis
+org.consensusj.bitcoin.proxy.core
+org.consensusj.bitcoin.proxy.jsonrpc
+org.consensusj.bitcoin.proxyd
