@@ -1,0 +1,17 @@
+asciidoctorj {
+    modules {
+        diagram.use()
+        diagram.version '2.0.1'
+        modules.pdf.version '1.6.0'
+    }
+}
+
+asciidoctor {
+    sourceDir file('doc')
+    outputDir file("$buildDir/site")
+}
+
+asciidoctorPdf {
+    sourceDir file('doc')
+    outputDir file("$buildDir/pdf")
+}

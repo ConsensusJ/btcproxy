@@ -1,0 +1,42 @@
+= btcproxyd configuration notes
+
+== Standard Ports for Bitcoin Core
+
+
+.Standard Ports for Bitcoin Core
+[cols="<,>,>,>"]
+|===
+| ^|MainNet ^|TestNet ^|RegTest
+
+|network-id
+| `org.bitcoin.production`
+| `org.bitcoin.test`
+| `org.bitcoin.regtest`
+
+| **RPC**
+| 8332
+| 18332
+| 18443
+
+| **P2P**
+| 8333
+| 18333
+| 18444
+
+| **ZMQ** (blocks)
+| 28332
+| 38332
+| 38443
+
+| **ZMQ** (tx)
+| 28333
+| 38333
+| 38444
+|===
+
+NOTE: The standard ports for **RPC** and **P2P** are the defaults in Bitcoin Core. The standard ports for **ZMQ** are recommended by this project (and somewhat influenced by the Lightning Network Daemon installation instructions)
+
+By using standard ports we achieve the following goals:
+
+1. We can run MainNet, TestNet, and RegTest simultaneously on the same host.
+2. We minimize the amount of reconfiguration of different tools, etc.

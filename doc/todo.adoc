@@ -1,0 +1,43 @@
+= Ideas and Proposed Features
+
+. RESEARCH built-in `bitcoind` caching, multithread, etc.
+. OMNICORE pull request for Get Balances for property with height/hash
+. Cache architecture
+.. Unified architecture
+... Supporting serving via JSON-RPC, REST, WebSockets, ZeroMQ?, RSocket?
+... Gets data from `bitcoind` via JSON-RPC, ZeroMQ (and REST?)
+... Supports plugins for Omni, Analytics, etc.
+.. JSON-RPC Features
+... Caching based upon ChainTip (best block)
+... Caching for non-ChainTip based data?
+... Caching 0-argument calls
+... Caching 1-argument calls
+.... Address
+.... TxID
+.... BlockHash
+.... BlockCount
+. Integration with and/or use of popular libraries
+.. Micronaut Cache
+... External Caches
+.. Micronaut Rate-limiter
+.. RxJava3
+.. resilience4j (vavr)
+.. Micronaut ACME (for certs)
+. Tor Hidden Service
+.. Canary UTXO
+. Payment Channel based Micropayments
+. How tied to Micronaut do we want to be
+.. What can go in library without Micronaut Dependency?
+. Is there a JSON-RPC only version? (e.g. not Bitcoin or blocks?)
+. Components that can be integrated with a bitcoinj-based server implementation
+. JDK 11 until Graal supports JDK 17
+. Docker flavors:
+.. Hotspot
+... x64
+... ARM64
+.. Graal Native-Image
+... x64
+... ARM64
+
+
+
