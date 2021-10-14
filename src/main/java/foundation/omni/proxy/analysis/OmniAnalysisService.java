@@ -6,7 +6,7 @@ import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import org.consensusj.bitcoin.proxy.jsonrpc.ExtraRpcRegistry;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * Service that combines Omni rich list and property list and makes available as "extra" RPCs

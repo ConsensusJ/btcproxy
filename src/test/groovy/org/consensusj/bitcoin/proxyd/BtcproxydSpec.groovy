@@ -3,7 +3,7 @@ package org.consensusj.bitcoin.proxyd
 import io.micronaut.runtime.EmbeddedApplication
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import spock.lang.Specification
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 @MicronautTest
 class BtcproxydSpec extends Specification {

@@ -3,7 +3,7 @@ package org.consensusj.bitcoin.proxy.jsonrpc;
 import io.reactivex.rxjava3.core.Single;
 import org.consensusj.jsonrpc.JsonRpcRequest;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
