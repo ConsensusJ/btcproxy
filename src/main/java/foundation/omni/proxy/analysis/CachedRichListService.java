@@ -1,13 +1,12 @@
 package foundation.omni.proxy.analysis;
 
-import com.msgilligan.bitcoinj.json.pojo.ChainTip;
+import foundation.omni.netapi.omnicore.RxOmniClient;
 import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.consensusj.analytics.service.RichListService;
 import org.consensusj.analytics.service.TokenRichList;
-import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
+import org.consensusj.bitcoin.json.pojo.ChainTip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,22 +20,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CachedRichListService<N extends Number & Comparable<? super N>, ID> implements RichListService<N, ID> {
     private static final Logger log = LoggerFactory.getLogger(CachedRichListService.class);
     private final RichListService<N, ID> uncachedService;
-    private final RxBitcoinClient jsonRpc;
+    private final RxOmniClient jsonRpc;
     private final List<ID> eager;
     private final ConcurrentHashMap<ID, Single<TokenRichList<N, ID>>> cache = new ConcurrentHashMap<>();
     private final int cacheSize = 12;
     private Disposable chainTipSubscription;
 
-    public CachedRichListService(RichListService<N, ID> uncachedService, RxBitcoinClient rxBitcoinClient, List<ID> eager) {
+    public CachedRichListService(RichListService<N, ID> uncachedService, RxOmniClient rxOmniClient, List<ID> eager) {
         this.uncachedService = uncachedService;
-        this.jsonRpc = rxBitcoinClient;
+        this.jsonRpc = rxOmniClient;
         this.eager = eager;
     }
 
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = Flowable.fromPublisher(jsonRpc.chainTipService()).subscribe(this::onNewBlock, this::onError);
+            chainTipSubscription = Flowable.fromPublisher(jsonRpc.chainTipPublisher()).subscribe(this::onNewBlock, this::onError);
         }
     }
 
@@ -47,7 +46,7 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     }
 
     @Override
-    public Observable<TokenRichList<N, ID>> richListUpdates(ID id, int i) {
+    public Flowable<TokenRichList<N, ID>> richListUpdates(ID id, int i) {
         throw new UnsupportedOperationException("this service is incubating and this method isn't available yet.");
     }
 

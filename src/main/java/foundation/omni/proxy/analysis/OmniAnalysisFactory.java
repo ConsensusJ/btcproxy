@@ -3,17 +3,16 @@ package foundation.omni.proxy.analysis;
 import com.fasterxml.jackson.databind.Module;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
-import foundation.omni.analytics.OmniLayerRichListService;
 import foundation.omni.json.conversion.OmniServerModule;
 import foundation.omni.netapi.ConsensusService;
+import foundation.omni.netapi.analytics.OmniLayerRichListService;
 import foundation.omni.netapi.omnicore.OmniCoreClient;
+import foundation.omni.netapi.omnicore.RxOmniClient;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
-import io.reactivex.rxjava3.core.Observable;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.MainNetParams;
-import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 
 import jakarta.inject.Singleton;
@@ -33,17 +32,16 @@ public class OmniAnalysisFactory {
     }
 
     @Singleton
-    public ConsensusService newOmniCoreClient(RxBitcoinClient rxBitcoinClient) {
-        return new OmniCoreClient(rxBitcoinClient);
+    public ConsensusService newOmniCoreClient(RxOmniClient rxOmniClient) {
+        return new OmniCoreClient(rxOmniClient);
     }
 
     @Singleton
     @Context
-    public CachedRichListService<OmniValue, CurrencyID> omniRichListService(RxBitcoinClient rxBitcoinClient, ConsensusService client) {
-        List<CurrencyID> richListEagerFetch  = eagerFetchList(rxBitcoinClient.getNetParams());
-        var chainTipService = Observable.fromPublisher(rxBitcoinClient.chainTipService());
-        var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client, chainTipService);
-        var cached = new CachedRichListService<>(uncached, rxBitcoinClient, richListEagerFetch);
+    public CachedRichListService<OmniValue, CurrencyID> omniRichListService(RxOmniClient rxOmniClient, ConsensusService client) {
+        List<CurrencyID> richListEagerFetch  = eagerFetchList(rxOmniClient.getNetParams());
+        var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client);
+        var cached = new CachedRichListService<>(uncached, rxOmniClient, richListEagerFetch);
         cached.start();
         return cached;
     }

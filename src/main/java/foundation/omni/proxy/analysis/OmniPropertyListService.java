@@ -1,9 +1,9 @@
 package foundation.omni.proxy.analysis;
 
-import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniDivisibleValue;
 import foundation.omni.json.pojo.OmniPropertyInfo;
+import foundation.omni.netapi.omnicore.RxOmniClient;
 import foundation.omni.rpc.SmartPropertyListInfo;
 import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Flowable;
@@ -11,8 +11,9 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.internal.operators.observable.ObservableInterval;
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.params.MainNetParams;
-import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
+import org.consensusj.bitcoin.json.pojo.ChainTip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 public class OmniPropertyListService {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
     private final List<CurrencyID> activeProperties;
-    RxBitcoinClient rxOmniClient;
+    RxOmniClient rxOmniClient;
     private final List<SmartPropertyListInfo> cachedPropertyList = new ArrayList<>();
     private Disposable chainTipSubscription;
     private Disposable intervalSubscription;
@@ -40,8 +41,7 @@ public class OmniPropertyListService {
 
     private final Observable<Long> loadPollingInterval;
 
-    OmniPropertyListService(RxBitcoinClient rxBitcoinClient) {
-        // RxBitcoinClient is currently an Omni client too!
+    OmniPropertyListService(RxOmniClient rxBitcoinClient) {
         rxOmniClient = rxBitcoinClient;
         loadPollingInterval = ObservableInterval.interval(5,5, TimeUnit.SECONDS);
         if (rxBitcoinClient.getNetParams().getId().equals(MainNetParams.ID_MAINNET)) {
@@ -54,7 +54,7 @@ public class OmniPropertyListService {
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = Flowable.fromPublisher(rxOmniClient.chainTipService()).subscribe(this::onNewBlock, this::onError);
+            chainTipSubscription = Flowable.fromPublisher(rxOmniClient.chainTipPublisher()).subscribe(this::onNewBlock, this::onError);
         }
         if (intervalSubscription == null) {
             intervalSubscription = loadPollingInterval.subscribe(i -> loadProperties(), this::onError);
@@ -89,7 +89,7 @@ public class OmniPropertyListService {
     private void updatePropertyAsync(CurrencyID id) {
         log.debug("Fetching {}", id);
         var disposable = rxOmniClient.pollOnce(() -> rxOmniClient.omniGetProperty(id))
-                .subscribe((info) -> update(id, info), this::onError);
+                .subscribe(info -> update(id, info), this::onError);
     }
 
     private void update(CurrencyID id, OmniPropertyInfo info) {
@@ -149,7 +149,7 @@ public class OmniPropertyListService {
             // We don't have a good test for TOMNI that works on a syncing mainnet, totalTokens stays zero until the exodus block it seems??
             return !info.getTotaltokens().equals(OmniDivisibleValue.ZERO);
         } else {
-            return info.getCreationtxid() != null;
+            return !info.getCreationtxid().equals(Sha256Hash.ZERO_HASH);
         }
     }
 }

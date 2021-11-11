@@ -1,10 +1,10 @@
 package org.consensusj.bitcoin.proxy.jsonrpc;
 
-import com.msgilligan.bitcoinj.json.pojo.ChainTip;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
-import org.consensusj.bitcoin.proxy.core.RxBitcoinClient;
+import org.consensusj.bitcoin.json.pojo.ChainTip;
+import org.consensusj.bitcoin.rx.jsonrpc.RxBitcoinClient;
 import org.consensusj.jsonrpc.JsonRpcRequest;
 import org.consensusj.jsonrpc.JsonRpcResponse;
 import org.slf4j.Logger;
@@ -41,7 +41,8 @@ public class CachedRpcService {
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = Flowable.fromPublisher(rxBitcoinClient.chainTipService()).subscribe(this::onNewBlock, this::onError);
+            chainTipSubscription = Flowable.fromPublisher(rxBitcoinClient.chainTipPublisher())
+                    .subscribe(this::onNewBlock, this::onError);
         }
     }
 
