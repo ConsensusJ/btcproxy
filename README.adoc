@@ -1,4 +1,4 @@
-= btc-proxyd: Bitcoin Proxy Daemon
+= btcproxy: Bitcoin Proxy Daemon
 Sean Gilligan <https://github.com/msgilligan>
 v0.1
 :description: ConsensusJ Bitcoin ProxyD README document.
