@@ -7,7 +7,7 @@ plugins {
     id("io.micronaut.application")          version "${micronautAppGradlePluginVersion}"
 }
 
-version = btcProxydVersion
+version = btcProxyVersion
 group = "org.consensusj.bitcoin.proxyd"
 
 buildScan {
