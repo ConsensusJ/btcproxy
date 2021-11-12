@@ -1,0 +1,39 @@
+micronaut:
+  http:
+    client:
+      read-timeout: 600s
+
+btcproxyd:
+  rpcproxy:
+    network-id: org.bitcoin.production
+    uri: http://localhost:8332
+    username: setmeplease
+    password: setmetooplease
+    use-zmq: true
+    allow-list:
+      - getblockcount
+      - getchaintips
+      - getbestblockhash
+      - getblockchaininfo
+      - getblockstats
+      - gettxoutsetinfo
+      - uptime
+      - help
+      - getrpcinfo
+      - getmemoryinfo
+      - getnetworkinfo
+      - getnettotals
+      - getpeerinfo
+      - getzmqnotifications
+      - listbanned
+      - listunspent
+      - ping
+      - scantxoutset
+      - omni_listproperties
+      - omni_getproperty
+      - omniproxy.getrichlist
+      - omniproxy.listproperties
+      - omniproxy.getproperty
+
+omniproxyd:
+  enabled: true

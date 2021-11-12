@@ -68,6 +68,12 @@ java {
     targetCompatibility = JavaVersion.toVersion("11")
 }
 
+
+run {
+    def runConfigPath = "${project.rootDir}/config/proxy-omni-mainnet.yml"
+    environment(['MICRONAUT_CONFIG_FILES':runConfigPath])
+}
+
 test {
     // Don't use MICRONAUT_CONFIG_FILES env variable in test
     environment(['MICRONAUT_CONFIG_FILES':''])
