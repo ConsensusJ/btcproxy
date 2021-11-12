@@ -55,7 +55,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
         remoteRpcUser = config.getUsername();
         remoteRpcPass = config.getPassword();
         optionalAllowList = Optional.of(config.getAllowList());
-        log.info("btcproxyd.rpc.uri: {}", remoteRpcUri);
+        log.info("remoteRpcUri: {}", remoteRpcUri);
     }
 
 
