@@ -31,6 +31,9 @@ btcproxyd:
       - scantxoutset
       - omni_listproperties
       - omni_getproperty
+      - omniproxy.help
+      - omniproxy.getbalance
+      - omniproxy.getbalances
       - omniproxy.getrichlist
       - omniproxy.listproperties
       - omniproxy.getproperty

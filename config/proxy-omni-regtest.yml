@@ -15,9 +15,36 @@ btcproxyd:
       - getchaintips
       - getbestblockhash
       - getblockchaininfo
+      - getblockstats
+      - gettxoutsetinfo
+      - getaddressinfo
+      - getaddressbalance
+      - importprivkey
+      - uptime
+      - help
+      - getrpcinfo
+      - getmemoryinfo
+      - getnetworkinfo
+      - getnettotals
+      - getpeerinfo
+      - getzmqnotifications
+      - listbanned
+      - listunspent
+      - listaddressgroupings
+      - ping
+      - scantxoutset
+      - omni_listproperties
+      - omni_getproperty
+      - omni_getallbalancesforaddress
+      - omni_getallbalancesforid
+      - omniproxy.help
+      - omniproxy.getbalance
+      - omniproxy.getbalances
       - omniproxy.getrichlist
       - omniproxy.listproperties
       - omniproxy.getproperty
+      - generate
+      - generatetoaddress
 
 omniproxyd:
   enabled: true
