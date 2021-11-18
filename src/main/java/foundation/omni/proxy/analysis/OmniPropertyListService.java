@@ -14,10 +14,14 @@ import io.reactivex.rxjava3.internal.operators.observable.ObservableInterval;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.params.MainNetParams;
 import org.consensusj.bitcoin.json.pojo.ChainTip;
+import org.consensusj.bitcoin.json.pojo.TxOutSetInfo;
+import org.consensusj.bitcoin.rx.jsonrpc.service.TxOutSetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.inject.Singleton;
+
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,30 +29,34 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Maintain a cache of {@link OmniPropertyInfo} for serving requests
  */
 @Singleton
 @Requires(property="omniproxyd.enabled", value = "true")
-public class OmniPropertyListService {
+public class OmniPropertyListService implements Closeable {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
     private final List<CurrencyID> activeProperties;
     RxOmniClient rxOmniClient;
-    private final List<SmartPropertyListInfo> cachedPropertyList = new ArrayList<>();
     private Disposable chainTipSubscription;
     private Disposable intervalSubscription;
+    private Disposable outSetSubscription;
 
     private final ConcurrentHashMap<CurrencyID, OmniPropertyInfo> cachedPropertyInfo = new ConcurrentHashMap<>(2000);
 
     private final Observable<Long> loadPollingInterval;
 
+    private final TxOutSetService txOutSetService;
+
     OmniPropertyListService(RxOmniClient rxBitcoinClient) {
         rxOmniClient = rxBitcoinClient;
-        loadPollingInterval = ObservableInterval.interval(5,5, TimeUnit.SECONDS);
+        txOutSetService = new TxOutSetService(rxBitcoinClient);
+        loadPollingInterval = ObservableInterval.interval(3,1, TimeUnit.SECONDS);
         if (rxBitcoinClient.getNetParams().getId().equals(MainNetParams.ID_MAINNET)) {
             activeProperties = List.of(CurrencyID.OMNI, CurrencyID.USDT);
         } else {
             activeProperties = List.of(CurrencyID.OMNI, CurrencyID.TOMNI);
         }
+        cachedPropertyInfo.put(CurrencyID.BTC, OmniPropertyInfo.mockBitcoinPropertyInfo(rxBitcoinClient.getNetParams()));
     }
 
     public synchronized void start() {
@@ -59,6 +67,19 @@ public class OmniPropertyListService {
         if (intervalSubscription == null) {
             intervalSubscription = loadPollingInterval.subscribe(i -> loadProperties(), this::onError);
         }
+        if (outSetSubscription == null) {
+            outSetSubscription = txOutSetService.getTxOutSetPublisher()
+                    .subscribe(this::updateBitcoin,
+                            t -> log.error("TxOutSetService", t),
+                            () -> log.error("TxOutSetService completed"));
+        }
+    }
+
+    @Override
+    public void close() {
+        chainTipSubscription.dispose();
+        intervalSubscription.dispose();
+        outSetSubscription.dispose();
     }
 
     public Single<List<OmniPropertyInfo>> getProperties() {
@@ -97,12 +118,16 @@ public class OmniPropertyListService {
         cachedPropertyInfo.put(id, info);
     }
 
+    private void updateBitcoin(TxOutSetInfo outSetInfo) {
+        log.info("Block height is {}, Bitcoin Supply is now: {}", outSetInfo.getHeight(), outSetInfo.getTotalAmount().toFriendlyString());
+        update(CurrencyID.BTC, OmniPropertyInfo.bitcoinPropertyInfo(rxOmniClient.getNetParams(), outSetInfo.getTotalAmount()));
+    }
+
     private void updateActiveProperties() {
         activeProperties.forEach(this::updatePropertyAsync);
     }
 
     private void handleNewProperties() {
-        final int perBlockNewFetch = 5;
         rxOmniClient.pollOnce(() -> rxOmniClient.omniListProperties())
                 .subscribe(this::onListProperties, this::onError);
     }
@@ -113,7 +138,7 @@ public class OmniPropertyListService {
         list.forEach(splInfo -> {
             if (!cachedPropertyInfo.containsKey(splInfo.getPropertyid())) {
                 newProperties.add(splInfo.getPropertyid());
-                cachedPropertyInfo.put(splInfo.getPropertyid(), new OmniPropertyInfo(splInfo));
+                cachedPropertyInfo.put(splInfo.getPropertyid(), new OmniPropertyInfo(rxOmniClient.getNetParams(), splInfo));
             }
         });
         // Fetch up to perBlockNewFetch new properties per block
@@ -137,13 +162,17 @@ public class OmniPropertyListService {
         unloadedProperties.sort(CurrencyID::compareTo);
         int subsize = Math.min(maxPerTickLoadFetch, unloadedProperties.size());
         List<CurrencyID> loadList = unloadedProperties.subList(0, subsize);
-        log.info("Found {} unloaded properties, loading {} of them asynchronously", unloadedProperties.size(), loadList.size());
+        if (unloadedProperties.size() > 0) {
+            log.info("Found {} unloaded properties, loading {} of them asynchronously", unloadedProperties.size(), loadList.size());
+        }
         loadList.forEach(this::updatePropertyAsync);
     }
 
     private static boolean isLoaded(OmniPropertyInfo info) {
         // All tokens besides OMNI and TOMNI must have a creationTxId
-        if (info.getPropertyid().equals(CurrencyID.OMNI)) {
+        if (info.getPropertyid().equals(CurrencyID.BTC)) {
+            return true;  // Bitcoin isn't loaded as an Omni property, so it's always "loaded"
+        } else if (info.getPropertyid().equals(CurrencyID.OMNI)) {
             return !info.getTotaltokens().equals(OmniDivisibleValue.ZERO);
         } else if (info.getPropertyid().equals(CurrencyID.TOMNI)) {
             // We don't have a good test for TOMNI that works on a syncing mainnet, totalTokens stays zero until the exodus block it seems??

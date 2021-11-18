@@ -1,16 +1,31 @@
 [
   {
-    "name" : "com.msgilligan.bitcoinj.json.pojo.ChainTip",
+    "name" : "org.consensusj.bitcoin.json.pojo.ChainTip",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
   {
-    "name" : "com.msgilligan.bitcoinj.json.pojo.ZmqNotification",
+    "name" : "org.consensusj.bitcoin.json.pojo.TxOutSetInfo",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.bitcoin.json.pojo.ZmqNotification",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "org.consensusj.bitcoin.json.pojo.bitcore.AddressBalanceInfo",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
   {
     "name" : "foundation.omni.json.pojo.OmniPropertyInfo",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "foundation.omni.json.conversion.CurrencyIDStringSerializer",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
@@ -21,6 +36,11 @@
   },
   {
     "name" : "foundation.omni.rpc.AddressBalanceEntry",
+    "allPublicMethods" : true,
+    "allPublicConstructors" : true
+  },
+  {
+    "name" : "foundation.omni.rpc.PropertyBalanceEntry",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },

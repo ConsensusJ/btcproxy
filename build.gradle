@@ -70,7 +70,7 @@ java {
 
 
 run {
-    def runConfigPath = "${project.rootDir}/config/proxy-omni-mainnet.yml"
+    def runConfigPath = "${project.rootDir}/config/proxy-omni-regtest.yml"
     environment(['MICRONAUT_CONFIG_FILES':runConfigPath])
 }
 
