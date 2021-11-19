@@ -10,7 +10,6 @@ import org.consensusj.bitcoin.proxy.jsonrpc.ExtraRpcRegistry;
 import jakarta.inject.Singleton;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service that combines Omni rich list and property list and makes available as "extra" RPCs
@@ -101,7 +100,7 @@ public class OmniAnalysisService {
     }
 
     private static List<Address> parmsToAddressList(List<Object> params) {
-        return params.stream().map(OmniAnalysisService::parmToAddress).collect(Collectors.toList());
+        return params.stream().map(OmniAnalysisService::parmToAddress).toList();
     }
 
 }

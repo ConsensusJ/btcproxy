@@ -6,7 +6,6 @@ import org.consensusj.jsonrpc.JsonRpcErrorException;
 import org.consensusj.jsonrpc.JsonRpcRequest;
 
 import jakarta.inject.Singleton;
-import org.consensusj.jsonrpc.JsonRpcStatusException;
 
 import java.util.Arrays;
 import java.util.HashMap;
