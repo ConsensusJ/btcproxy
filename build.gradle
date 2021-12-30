@@ -36,8 +36,18 @@ micronaut {
         incremental(true)
         annotations("org.consensusj.bitcoin.proxyd.*")
     }
-    nativeImage {
-        imageName('btcproxyd')
+}
+
+graalvmNative {
+    binaries {
+        main {
+            imageName = 'btcproxyd'
+            buildArgs.add('--initialize-at-run-time=io.netty.handler.ssl.OpenSslAsyncPrivateKeyMethod,io.netty.handler.ssl.OpenSsl,io.netty.handler.ssl.OpenSslPrivateKeyMethod,io.netty.internal.tcnative.CertificateVerifier,io.netty.internal.tcnative.SSL,io.netty.internal.tcnative.SSLPrivateKeyMethod')
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(17)
+                vendor = JvmVendorSpec.matching("GraalVM Community")
+            }
+        }
     }
 }
 
@@ -79,11 +89,6 @@ test {
     environment(['MICRONAUT_CONFIG_FILES':''])
 }
 
-nativeImage {
-    args = [
-        '--initialize-at-run-time=io.netty.handler.ssl.OpenSslAsyncPrivateKeyMethod,io.netty.handler.ssl.OpenSsl,io.netty.handler.ssl.OpenSslPrivateKeyMethod,io.netty.internal.tcnative.CertificateVerifier,io.netty.internal.tcnative.SSL,io.netty.internal.tcnative.SSLPrivateKeyMethod'
-    ]
-}
 
 dockerBuild {
     images = ["${System.env.DOCKER_IMAGE ?: project.name + '-jit'}:$project.version"]
