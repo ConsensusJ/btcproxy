@@ -1,10 +1,10 @@
-= btcproxyd/OmniProxy Architecture
+= btcproxy/OmniProxy Architecture
 :toc:
 :toclevels: 3
 
 == Overview
 
-*btcproxyd* (also known as *OmniProxy* when OmniLayer functionality is enabled) is a multi-function proxy server that communicates with *Bitcoin Core* (or *Omni Core* which is an extended version of *Bitcoin Core*) and can be used for the following purposes:
+*btcproxy* (also known as *OmniProxy* when OmniLayer functionality is enabled) is a multi-function proxy server that communicates with *Bitcoin Core* (or *Omni Core* which is an extended version of *Bitcoin Core*) and can be used for the following purposes:
 
 * Create a public API to a Bitcoin Core node
 * Provide a relatively lightweight backend for a non-custodial wallet
@@ -28,12 +28,12 @@ Current and planned core functionality includes
 
 == Implementation Technology
 
-*btcproxyd* is written in _modern_ Java. What do we mean by _modern_?
+*btcproxy* is written in _modern_ Java. What do we mean by _modern_?
 
-* Implemented using OpenJDK 11 language features and API (may migrate to JDK 17 in the future)
+* Implemented using OpenJDK 17 language features and API
 * *bitcoinj* data types are used, to provide access to Bitcoin data validation, cryptographic operations, formatting, etc.
 * Major interfaces are asynchronous (`CompletableFuture`) and/or reactive (*RxJava* 3)
-* Written in functional-style java with minimal mutable state
+* Written in functional-style Java with minimal mutable state
 * Supports ahead-of-time compilation to native executable using GraalVM `native-image`
 * Can also be deployed on latest HotSpot VMs for compatible use-cases
 * High-performance, event-driven I/O using modern concurrency constructs
@@ -130,6 +130,26 @@ Client -> Proxy : JSON-RPC request
 Proxy -> Cache : cache read
 Proxy <- Cache : read response
 Client <- Proxy : JSON-RPC response
+
+....
+
+=== Full Node (bitcoinj-based)
+
+There is also available a partial implementation of a subset of Bitcoin functionality using the bitcoinj-based implementation. This can use the bitcoinj SPV chain or the experimental SPV full-pruned-node implementation. In this configuration we call the application **J-Bitcoin-D**.
+
+
+[plantuml, format="svg", id="seq-diagram-jsonrpc-proxy"]
+....
+participant ClientApp      as Client
+participant jbitcoind      as Server
+database    Blockstore     as Blockstore
+participant P2PNet         as P2PNet
+
+Server <-> P2PNet : Synchronization
+Server <-> Blockstore : Storage
+Client -> Server : JSON-RPC request
+Client <- Server : JSON-RPC response
+Client <- Server : WebSock message
 
 ....
 
