@@ -76,6 +76,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
                 return renderResponse(callCached(request));
             } else {
                 // Make a remote call and return unprocessed result
+                log.info("Request {}", request.getMethod());
                 return client.exchange( HttpRequest.POST(remoteRpcUri, request).basicAuth(remoteRpcUser, remoteRpcPass), String.class);
             }
         } else {
