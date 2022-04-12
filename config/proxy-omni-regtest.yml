@@ -12,6 +12,7 @@ btcproxyd:
     use-zmq: true
     allow-list:
       - getblockcount
+      - getblock
       - getchaintips
       - getbestblockhash
       - getblockchaininfo
@@ -33,6 +34,7 @@ btcproxyd:
       - listaddressgroupings
       - ping
       - scantxoutset
+      - sendrawtransaction
       - omni_listproperties
       - omni_getproperty
       - omni_getallbalancesforaddress

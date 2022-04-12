@@ -31,6 +31,7 @@ btcproxyd:
       - listunspent
       - ping
       - scantxoutset
+      - sendrawtransaction
       - omni_listproperties
       - omni_getproperty
       - omniproxy.getrichlist
