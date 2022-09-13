@@ -67,6 +67,14 @@ dependencies {
     implementation "foundation.omni:omnij-net-api:${omnijVersion}"
 }
 
+configurations.all {
+    resolutionStrategy {
+        // ConsensusJ and OmniJ are now declaring transitive dependencies on slf4j-api 2.0.0
+        // Until Micronaut upgrades, let's force the dependency back to the latest version of 1.7.x
+        force 'org.slf4j:slf4j-api:1.7.36'
+    }
+}
+
 
 application {
     mainClass.set("org.consensusj.bitcoin.proxyd.Application")
