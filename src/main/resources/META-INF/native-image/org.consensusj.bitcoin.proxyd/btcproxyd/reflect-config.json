@@ -30,17 +30,17 @@
     "allPublicConstructors" : true
   },
   {
-    "name" : "foundation.omni.rpc.SmartPropertyListInfo",
+    "name" : "foundation.omni.json.pojo.SmartPropertyListInfo",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
   {
-    "name" : "foundation.omni.rpc.AddressBalanceEntry",
+    "name" : "foundation.omni.json.pojo.AddressBalanceEntry",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
   {
-    "name" : "foundation.omni.rpc.PropertyBalanceEntry",
+    "name" : "foundation.omni.PropertyBalanceEntry",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
