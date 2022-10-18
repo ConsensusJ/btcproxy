@@ -3,7 +3,7 @@ package foundation.omni.proxy.analysis;
 import foundation.omni.CurrencyID;
 import foundation.omni.OmniDivisibleValue;
 import foundation.omni.json.pojo.OmniPropertyInfo;
-import foundation.omni.rpc.SmartPropertyListInfo;
+import foundation.omni.json.pojo.SmartPropertyListInfo;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
 import org.consensusj.bitcoin.json.pojo.TxOutSetInfo;

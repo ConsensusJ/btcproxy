@@ -1,8 +1,8 @@
 package foundation.omni.proxy.analysis;
 
 import foundation.omni.netapi.ConsensusService;
-import foundation.omni.netapi.OmniJBalances;
-import foundation.omni.netapi.WalletAddressBalance;
+import foundation.omni.json.pojo.OmniJBalances;
+import foundation.omni.json.pojo.WalletAddressBalance;
 import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Single;
 import jakarta.inject.Singleton;

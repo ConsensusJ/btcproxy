@@ -3,7 +3,7 @@ package foundation.omni.proxy.analysis;
 import foundation.omni.CurrencyID;
 import foundation.omni.json.pojo.OmniPropertyInfo;
 import foundation.omni.netapi.omnicore.RxOmniClient;
-import foundation.omni.rpc.SmartPropertyListInfo;
+import foundation.omni.json.pojo.SmartPropertyListInfo;
 import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
