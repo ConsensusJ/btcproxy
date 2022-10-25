@@ -97,6 +97,9 @@ test {
     environment(['MICRONAUT_CONFIG_FILES':''])
 }
 
+tasks.named("dockerfile") {
+    baseImage = "eclipse-temurin:17-jre-jammy"
+}
 
 dockerBuild {
     images = ["${System.env.DOCKER_IMAGE ?: project.name + '-jit'}:$project.version"]
