@@ -35,7 +35,7 @@
     "allPublicConstructors" : true
   },
   {
-    "name" : "foundation.omni.json.pojo.AddressBalanceEntry",
+    "name" : "foundation.omni.AddressBalanceEntry",
     "allPublicMethods" : true,
     "allPublicConstructors" : true
   },
