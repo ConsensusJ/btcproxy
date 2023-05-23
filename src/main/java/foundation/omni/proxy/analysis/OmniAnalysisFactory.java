@@ -7,7 +7,7 @@ import foundation.omni.json.conversion.OmniServerModule;
 import foundation.omni.netapi.ConsensusService;
 import foundation.omni.netapi.analytics.OmniLayerRichListService;
 import foundation.omni.netapi.omnicore.OmniCoreClient;
-import foundation.omni.netapi.omnicore.RxOmniClient;
+import foundation.omni.rpc.OmniClient;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
@@ -32,16 +32,16 @@ public class OmniAnalysisFactory {
     }
 
     @Singleton
-    public ConsensusService newOmniCoreClient(RxOmniClient rxOmniClient) {
-        return new OmniCoreClient(rxOmniClient);
+    public ConsensusService newOmniCoreClient(OmniClient omniClient) {
+        return new OmniCoreClient(omniClient);
     }
 
     @Singleton
     @Context
-    public CachedRichListService<OmniValue, CurrencyID> omniRichListService(RxOmniClient rxOmniClient, ConsensusService client) {
-        List<CurrencyID> richListEagerFetch  = eagerFetchList(rxOmniClient.getNetParams());
+    public CachedRichListService<OmniValue, CurrencyID> omniRichListService(OmniClient omniClient, ConsensusService client) {
+        List<CurrencyID> richListEagerFetch  = eagerFetchList(omniClient.getNetParams());
         var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client);
-        var cached = new CachedRichListService<>(uncached, rxOmniClient, richListEagerFetch);
+        var cached = new CachedRichListService<>(uncached, omniClient, richListEagerFetch);
         cached.start();
         return cached;
     }

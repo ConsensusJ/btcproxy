@@ -2,8 +2,8 @@ package foundation.omni.proxy.analysis;
 
 import foundation.omni.CurrencyID;
 import foundation.omni.json.pojo.OmniPropertyInfo;
-import foundation.omni.netapi.omnicore.RxOmniClient;
 import foundation.omni.json.pojo.SmartPropertyListInfo;
+import foundation.omni.rpc.OmniClient;
 import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
@@ -27,14 +27,14 @@ import static foundation.omni.CurrencyID.USDT;
 
 /**
  * Maintain a cache of {@link OmniPropertyInfo} for serving requests. The cache is loaded
- * using data received from {@link RxOmniClient}.
+ * using data received from {@link OmniClient}.
  */
 @Singleton
 @Requires(property="omniproxyd.enabled", value = "true")
 public class OmniPropertyListService implements Closeable {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
 
-    private final RxOmniClient rxJsonClient;
+    private final OmniClient rxJsonClient;
     private final OmniPropertyListCache cache;
     private final List<CurrencyID> activeProperties;
     private final TxOutSetService txOutSetService;
@@ -44,11 +44,11 @@ public class OmniPropertyListService implements Closeable {
     private Disposable intervalSubscription;
     private Disposable outSetSubscription;
 
-    OmniPropertyListService(RxOmniClient rxOmniClient) {
-        rxJsonClient = rxOmniClient;
+    OmniPropertyListService(OmniClient omniClient) {
+        rxJsonClient = omniClient;
         cache = new OmniPropertyListCache(rxJsonClient.getNetParams());
         activeProperties = rxJsonClient.getNetParams().equals(MainNetParams.get()) ? List.of(OMNI, TOMNI, USDT) : List.of(OMNI, TOMNI);
-        txOutSetService = new TxOutSetService(rxOmniClient);
+        txOutSetService = new TxOutSetService(omniClient);
         timerInterval = Flowable.interval(3,1, TimeUnit.SECONDS);
     }
 

@@ -1,7 +1,7 @@
 package org.consensusj.bitcoin.proxyd;
 
 import com.fasterxml.jackson.databind.Module;
-import foundation.omni.netapi.omnicore.RxOmniClient;
+import foundation.omni.rpc.OmniClient;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
 import org.consensusj.bitcoin.json.conversion.RpcServerModule;
@@ -27,8 +27,8 @@ public class Application {
     }
     
     @Singleton
-    public RxOmniClient bitcoinClient(JsonRpcProxyConfiguration configuration) {
-        var client = new RxOmniClient(configuration.getNetworkParameters(),
+    public OmniClient bitcoinClient(JsonRpcProxyConfiguration configuration) {
+        var client = new OmniClient(configuration.getNetworkParameters(),
                 configuration.getUri(),
                 configuration.getUsername(),
                 configuration.getPassword(),

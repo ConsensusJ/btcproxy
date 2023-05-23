@@ -1,6 +1,6 @@
 package foundation.omni.proxy.analysis;
 
-import foundation.omni.netapi.omnicore.RxOmniClient;
+import foundation.omni.rpc.OmniClient;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -20,15 +20,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CachedRichListService<N extends Number & Comparable<? super N>, ID> implements RichListService<N, ID> {
     private static final Logger log = LoggerFactory.getLogger(CachedRichListService.class);
     private final RichListService<N, ID> uncachedService;
-    private final RxOmniClient jsonRpc;
+    private final OmniClient jsonRpc;
     private final List<ID> eager;
     private final ConcurrentHashMap<ID, Single<TokenRichList<N, ID>>> cache = new ConcurrentHashMap<>();
     private final int cacheSize = 12;
     private Disposable chainTipSubscription;
 
-    public CachedRichListService(RichListService<N, ID> uncachedService, RxOmniClient rxOmniClient, List<ID> eager) {
+    public CachedRichListService(RichListService<N, ID> uncachedService, OmniClient omniClient, List<ID> eager) {
         this.uncachedService = uncachedService;
-        this.jsonRpc = rxOmniClient;
+        this.jsonRpc = omniClient;
         this.eager = eager;
     }
 
