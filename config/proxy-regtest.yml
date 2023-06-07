@@ -12,6 +12,7 @@ btcproxyd:
     use-zmq: true
     allow-list:
       - generate
+      - getnewaddress
       - generatetoaddress
       - getblockcount
       - getchaintips
@@ -34,6 +35,7 @@ btcproxyd:
       - sendrawtransaction
       - omni_listproperties
       - omni_getproperty
+      - omniproxy.help
       - omniproxy.getrichlist
       - omniproxy.listproperties
       - omniproxy.getproperty
