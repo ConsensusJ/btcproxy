@@ -97,6 +97,9 @@ test {
     environment(['MICRONAUT_CONFIG_FILES':''])
 }
 
+// TODO: See if we can use this HOW-TO to build AMD64 & ARM64: https://dev.to/cloudx/multi-arch-docker-images-the-easy-way-with-github-actions-4k54
+// See also: https://github.com/bmuschko/gradle-docker-plugin/issues/967#issuecomment-1103768609
+
 tasks.named("dockerfile") {
     baseImage = "eclipse-temurin:17-jre-jammy"
 }
@@ -109,7 +112,18 @@ dockerBuildNative {
     images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
 }
 
+def registry = 'consensusj'
+def jitImageName = "$project.name-jit"
+
+// Build and Push btcproxyd-jit for ARM64 and AMD64 architectures
+task dockerBuildxImage(type:Exec) {
+    group 'build'
+    description "Builds multiplatform image using 'docker buildx'"
+    dependsOn dockerfile, buildLayers
+    workingDir 'build/docker/main'
+    executable 'docker'
+    args = ['buildx', 'build', '--platform', 'linux/amd64,linux/arm64', '-t', "$registry/$jitImageName:$project.version", '-t', "$registry/$jitImageName:latest", '--push',  '.']
+}
+
 apply from: 'gradle/asciidoctor.gradle'
 apply from: 'gradle/github-pages.gradle'
-
-
