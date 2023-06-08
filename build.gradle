@@ -114,6 +114,7 @@ dockerBuildNative {
 
 def registry = 'consensusj'
 def jitImageName = "$project.name-jit"
+def nativeImageName = "$project.name"
 
 // Build and Push btcproxyd-jit for ARM64 and AMD64 architectures
 task dockerBuildxImage(type:Exec) {
@@ -122,7 +123,20 @@ task dockerBuildxImage(type:Exec) {
     dependsOn dockerfile, buildLayers
     workingDir 'build/docker/main'
     executable 'docker'
-    args = ['buildx', 'build', '--platform', 'linux/amd64,linux/arm64', '-t', "$registry/$jitImageName:$project.version", '-t', "$registry/$jitImageName:latest", '--push',  '.']
+    args = ['buildx', 'build', '--platform', 'linux/amd64,linux/arm64',
+            '-t', "$registry/$jitImageName:$project.version",
+            '-t', "$registry/$jitImageName:latest", '--push',  '.']
+}
+
+task dockerBuildxNativeImage(type:Exec) {
+    group 'build'
+    description "Builds multiplatform native image using 'docker buildx'"
+    dependsOn dockerfileNative, buildNativeLayersTask, dockerPrepareContext
+    workingDir 'build/docker/native-main'
+    executable 'docker'
+    args = ['buildx', 'build', '--file', 'DockerfileNative','--platform', 'linux/amd64,linux/arm64',
+            '-t', "$registry/$nativeImageName:$project.version",
+            '-t', "$registry/$nativeImageName:latest", '--push',  '.']
 }
 
 apply from: 'gradle/asciidoctor.gradle'
