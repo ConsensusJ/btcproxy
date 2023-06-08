@@ -13,13 +13,15 @@ jobs:
             ~/.m2/repository
           key: ${{ runner.os }}-gradle-test-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle-test-
-      - name: Setup GraalVM CE
-        uses: DeLaGuardo/setup-graalvm@4.0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          graalvm: '22.3.1'
-          java: 'java17'
-      - name: Install Native Image
-        run: gu install native-image
+          java-version: 17
+          distribution: 'temurin'
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - name: Docker login
         uses: docker/login-action@v2
         with:
@@ -33,4 +35,4 @@ jobs:
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/btcproxyd" | sed -e 's#//#/#' -e 's#^/##'`
-          ./gradlew check dockerPushNative --no-daemon -s --info --scan
+          ./gradlew check dockerBuildxNativeImage --no-daemon -s --info --scan
