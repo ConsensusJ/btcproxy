@@ -1,5 +1,9 @@
-name: Java CI
-on: [push, pull_request]
+name: Build/Push Docker Native Image
+on:
+  push:
+    branches:
+      - master
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,5 +39,5 @@ jobs:
           DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
-          export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/btcproxyd-jit" | sed -e 's#//#/#' -e 's#^/##'`
-          ./gradlew check dockerBuildxImage --no-daemon -s --info --scan
+          export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/btcproxyd" | sed -e 's#//#/#' -e 's#^/##'`
+          ./gradlew check dockerBuildxNativeImage --no-daemon -s --info --scan
