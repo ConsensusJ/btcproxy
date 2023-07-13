@@ -4,7 +4,9 @@ import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
-import org.bitcoinj.core.Address;
+import org.bitcoinj.base.Address;
+import org.bitcoinj.base.AddressParser;
+import org.bitcoinj.base.DefaultAddressParser;
 import org.consensusj.bitcoin.proxy.jsonrpc.ExtraRpcRegistry;
 
 import jakarta.inject.Singleton;
@@ -18,6 +20,7 @@ import java.util.List;
 @Context
 @Requires(property="omniproxyd.enabled", value = "true")
 public class OmniAnalysisService {
+    private static final AddressParser addressParser = new DefaultAddressParser();
     private final ExtraRpcRegistry rpcRegistry;
     private final CachedRichListService<OmniValue, CurrencyID> richListService;
     private final OmniPropertyListService propertyListService;
@@ -93,7 +96,7 @@ public class OmniAnalysisService {
 
     private static Address parmToAddress(Object param) {
         if (param instanceof String) {
-            return Address.fromString(null, (String) param);
+            return addressParser.parseAddressAnyNetwork((String) param);
         } else {
             throw new IllegalArgumentException("can't covert to address");
         }

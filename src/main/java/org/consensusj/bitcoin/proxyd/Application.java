@@ -23,12 +23,13 @@ public class Application {
 
     @Singleton
     public Module jacksonModule(JsonRpcProxyConfiguration config) {
-        return new RpcServerModule(config.getNetworkParameters());
+        return new RpcServerModule();
     }
     
     @Singleton
     public OmniClient bitcoinClient(JsonRpcProxyConfiguration configuration) {
-        var client = new OmniClient(configuration.getNetworkParameters(),
+        log.info("Proxying for {}", configuration.getUri());
+        var client = new OmniClient(configuration.network(),
                 configuration.getUri(),
                 configuration.getUsername(),
                 configuration.getPassword(),

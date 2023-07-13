@@ -9,7 +9,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
-import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.base.BitcoinNetwork;
 import org.consensusj.bitcoin.json.pojo.ChainTip;
 import org.consensusj.bitcoin.rx.jsonrpc.service.TxOutSetService;
 import org.slf4j.Logger;
@@ -46,8 +46,8 @@ public class OmniPropertyListService implements Closeable {
 
     OmniPropertyListService(OmniClient omniClient) {
         rxJsonClient = omniClient;
-        cache = new OmniPropertyListCache(rxJsonClient.getNetParams());
-        activeProperties = rxJsonClient.getNetParams().equals(MainNetParams.get()) ? List.of(OMNI, TOMNI, USDT) : List.of(OMNI, TOMNI);
+        cache = new OmniPropertyListCache((BitcoinNetwork) rxJsonClient.getNetwork());
+        activeProperties = rxJsonClient.getNetwork().equals(BitcoinNetwork.MAINNET) ? List.of(OMNI, TOMNI, USDT) : List.of(OMNI, TOMNI);
         txOutSetService = new TxOutSetService(omniClient);
         timerInterval = Flowable.interval(3,1, TimeUnit.SECONDS);
     }

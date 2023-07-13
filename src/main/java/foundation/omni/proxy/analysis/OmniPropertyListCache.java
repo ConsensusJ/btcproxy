@@ -4,8 +4,8 @@ import foundation.omni.CurrencyID;
 import foundation.omni.OmniDivisibleValue;
 import foundation.omni.json.pojo.OmniPropertyInfo;
 import foundation.omni.json.pojo.SmartPropertyListInfo;
-import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.base.BitcoinNetwork;
+import org.bitcoinj.base.Sha256Hash;
 import org.consensusj.bitcoin.json.pojo.TxOutSetInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +25,13 @@ import static foundation.omni.CurrencyID.TOMNI;
 public class OmniPropertyListCache {
     private static final Logger log = LoggerFactory.getLogger(OmniPropertyListService.class);
 
-    private final NetworkParameters netParams;
+    private final BitcoinNetwork network;
     private final ConcurrentHashMap<CurrencyID, OmniPropertyInfo> map = new ConcurrentHashMap<>(2000);
 
-    public OmniPropertyListCache(NetworkParameters networkParameters) {
-        netParams = networkParameters;
+    public OmniPropertyListCache(BitcoinNetwork network) {
+        this.network = network;
         // Add Bitcoin placeholder entry with estimated totalSupply
-        map.put(BTC, OmniPropertyInfo.mockBitcoinPropertyInfo(netParams));
+        map.put(BTC, OmniPropertyInfo.mockBitcoinPropertyInfo(network));
     }
 
     public OmniPropertyInfo get(CurrencyID id) {
@@ -56,11 +56,11 @@ public class OmniPropertyListCache {
 
     public void cachePutBitcoin(TxOutSetInfo outSetInfo) {
         log.info("Block height is {}, Bitcoin Supply is now: {}", outSetInfo.getHeight(), outSetInfo.getTotalAmount().toFriendlyString());
-        cachePut(OmniPropertyInfo.bitcoinPropertyInfo(netParams, outSetInfo.getTotalAmount()));
+        cachePut(OmniPropertyInfo.bitcoinPropertyInfo(network, outSetInfo.getTotalAmount()));
     }
 
     public void cachePutIfNew(SmartPropertyListInfo splInfo) {
-        map.computeIfAbsent(splInfo.getPropertyid(), id -> new OmniPropertyInfo(netParams, splInfo));
+        map.computeIfAbsent(splInfo.getPropertyid(), id -> new OmniPropertyInfo(network, splInfo));
     }
 
     /**
