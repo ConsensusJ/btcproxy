@@ -40,4 +40,4 @@ jobs:
           TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           export DOCKER_IMAGE=`echo "${DOCKER_REGISTRY_URL}/${DOCKER_REPOSITORY_PATH}/btcproxyd-jit" | sed -e 's#//#/#' -e 's#^/##'`
-          ./gradlew check dockerBuildxImage --no-daemon -s --info --scan
+          ./gradlew check dockerBuildxImage --no-daemon --stacktrace --info --scan

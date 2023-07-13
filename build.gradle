@@ -53,13 +53,17 @@ graalvmNative {
 
 dependencies {
     compileOnly("org.graalvm.nativeimage:svm")
-    implementation("io.micronaut:micronaut-validation")
+    implementation "io.micronaut:micronaut-jackson-databind"
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut.acme:micronaut-acme")
-    implementation("javax.annotation:javax.annotation-api")
+    implementation "jakarta.annotation:jakarta.annotation-api"
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut.rxjava3:micronaut-rxjava3")
+
+    runtimeOnly "org.yaml:snakeyaml"
     runtimeOnly("ch.qos.logback:logback-classic")
+
+    implementation 'org.bouncycastle:bcprov-jdk15to18:1.72'
 
     implementation "com.msgilligan:cj-btc-jsonrpc:${consensusjVersion}"
     implementation "com.msgilligan:cj-btc-rx-jsonrpc:${consensusjVersion}"
@@ -67,15 +71,6 @@ dependencies {
     implementation "foundation.omni:omnij-jsonrpc:${omnijVersion}"
     implementation "foundation.omni:omnij-net-api:${omnijVersion}"
 }
-
-configurations.all {
-    resolutionStrategy {
-        // ConsensusJ and OmniJ are now declaring transitive dependencies on slf4j-api 2.0.0
-        // Until Micronaut upgrades, let's force the dependency back to the latest version of 1.7.x
-        force 'org.slf4j:slf4j-api:1.7.36'
-    }
-}
-
 
 application {
     mainClass.set("org.consensusj.bitcoin.proxyd.Application")

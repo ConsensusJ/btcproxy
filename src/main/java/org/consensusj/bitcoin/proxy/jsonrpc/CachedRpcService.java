@@ -10,7 +10,7 @@ import org.consensusj.jsonrpc.JsonRpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
