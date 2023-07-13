@@ -4,7 +4,7 @@ def siteDir = "$buildDir/site"
 def apiDocDir = "$buildDir/docs/javadoc"
 
 gitPublish {
-    repoUri = 'git@github.com:ConsensusJ/btc-proxyd.git'
+    repoUri = 'git@github.com:ConsensusJ/btcproxy.git'
 
     branch = 'gh-pages'
 
