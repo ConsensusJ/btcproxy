@@ -1,15 +1,15 @@
 = btcproxy: Bitcoin Proxy Daemon
 Sean Gilligan <https://github.com/msgilligan>
-v0.1
+v0.3.18
 :description: ConsensusJ Bitcoin ProxyD README document.
-:proxyd-version: 0.1
+:proxyd-version: 0.3.18
 :tip-caption: :bulb:
 :note-caption: :information_source:
 :important-caption: :heavy_exclamation_mark:
 :caution-caption: :fire:
 :warning-caption: :warning:
 
-image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/gradle.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/gradle.yml"] image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/graalvm.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/graalvm.yml"]
+image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/gradle.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/gradle.yml"] image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/build-docker-jit.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/build-docker-jit.yml"] image:https://github.com/ConsensusJ/btc-proxyd/actions/workflows/build-docker-native.yml/badge.svg["Build Status", link="https://github.com/ConsensusJ/btc-proxyd/actions/workflows/build-docker-native.yml"]
 
 Work-in-progress on a JSON-RPC proxy daemon for https://bitcoin.org/en/bitcoin-core/[bitcoind].  Stay tuned.
 
