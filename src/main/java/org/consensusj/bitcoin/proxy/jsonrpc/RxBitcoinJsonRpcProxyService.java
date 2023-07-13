@@ -142,7 +142,7 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
 
     /**
      * Convert params from strings to Java types that will map to correct JSON types
-     *
+     * <p>
      * TODO: Make this better and complete
      *
      * @param method the JSON-RPC method

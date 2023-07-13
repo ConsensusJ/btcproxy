@@ -17,7 +17,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         JsonRpcProxyConfiguration jsonRpcProxyConfiguration = ctx.getBean(JsonRpcProxyConfiguration)
 
         then:
-        jsonRpcProxyConfiguration.networkParameters.getId() == 'org.bitcoin.production'
+        jsonRpcProxyConfiguration.network().id()            == 'org.bitcoin.production'
         jsonRpcProxyConfiguration.uri.toString()            == 'http://localhost:8332'
         jsonRpcProxyConfiguration.username                  == 'rpcusername'
         jsonRpcProxyConfiguration.password                  == 'rpcpassword'
@@ -44,7 +44,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         JsonRpcProxyConfiguration jsonRpcProxyConfiguration = ctx.getBean(JsonRpcProxyConfiguration)
 
         then:
-        jsonRpcProxyConfiguration.networkParameters.getId() == 'org.bitcoin.regtest'
+        jsonRpcProxyConfiguration.network().id()            == 'org.bitcoin.regtest'
         jsonRpcProxyConfiguration.uri.toString()            == 'http://localhost:9999'
         jsonRpcProxyConfiguration.username                  == 'Satoshi'
         jsonRpcProxyConfiguration.password                  == 'Nakamoto'

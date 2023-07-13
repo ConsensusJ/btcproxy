@@ -11,8 +11,8 @@ import foundation.omni.rpc.OmniClient;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
-import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.base.BitcoinNetwork;
+import org.bitcoinj.base.Network;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
 
 import jakarta.inject.Singleton;
@@ -39,7 +39,7 @@ public class OmniAnalysisFactory {
     @Singleton
     @Context
     public CachedRichListService<OmniValue, CurrencyID> omniRichListService(OmniClient omniClient, ConsensusService client) {
-        List<CurrencyID> richListEagerFetch  = eagerFetchList(omniClient.getNetParams());
+        List<CurrencyID> richListEagerFetch  = eagerFetchList(omniClient.getNetwork());
         var uncached = new OmniLayerRichListService<OmniValue, CurrencyID>(client);
         var cached = new CachedRichListService<>(uncached, omniClient, richListEagerFetch);
         cached.start();
@@ -48,11 +48,11 @@ public class OmniAnalysisFactory {
 
     /**
      * Return the CurrencyIDs that should have their rich lists fetched on each block
-     * @param params The network we are running on
+     * @param network The network we are running on
      * @return List of CurrencyIDs to eager fetch
      */
-    private static List<CurrencyID> eagerFetchList(NetworkParameters params) {
-        return params.getId().equals(MainNetParams.ID_MAINNET)
+    private static List<CurrencyID> eagerFetchList(Network network) {
+        return network == BitcoinNetwork.MAINNET
                 ? List.of(CurrencyID.OMNI, CurrencyID.USDT)  // On MainNet eagerly fetch OMNI & USDT
                 : List.of(CurrencyID.OMNI);                  // On other nets, just prefetch OMNI
     }

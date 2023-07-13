@@ -6,7 +6,7 @@ import foundation.omni.json.pojo.WalletAddressBalance;
 import io.micronaut.context.annotation.Requires;
 import io.reactivex.rxjava3.core.Single;
 import jakarta.inject.Singleton;
-import org.bitcoinj.core.Address;
+import org.bitcoinj.base.Address;
 
 import java.util.List;
 
