@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>btcproxy/OmniProxy Architecture</title>
+<title>Raspberry PI Bitcoin/Omni Core + btcproxy/omniproxy setup</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,226 +438,158 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>btcproxy/OmniProxy Architecture</h1>
+<h1>Raspberry PI Bitcoin/Omni Core + btcproxy/omniproxy setup</h1>
 <div class="details">
 <span id="revnumber">version 0.4.0</span>
-</div>
-<div id="toc" class="toc">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_overview">Overview</a></li>
-<li><a href="#_functionality">Functionality</a></li>
-<li><a href="#_implementation_technology">Implementation Technology</a></li>
-<li><a href="#_use_cases_and_sequence_diagrams">Use Cases and Sequence Diagrams</a>
-<ul class="sectlevel2">
-<li><a href="#_end_to_end_push_e_g_new_transaction">End-to-end Push (e.g. new Transaction)</a></li>
-<li><a href="#_json_rpc_client_api">JSON-RPC Client API</a>
-<ul class="sectlevel3">
-<li><a href="#_simple_json_rpc_proxying">Simple JSON-RPC Proxying</a></li>
-<li><a href="#_json_rpc_proxy_wcache">JSON-RPC Proxy w/Cache</a></li>
-<li><a href="#_aggregation_calculation_and_caching">Aggregation, Calculation, and Caching</a></li>
-</ul>
-</li>
-<li><a href="#_full_node_bitcoinj_based">Full Node (bitcoinj-based)</a></li>
-</ul>
-</li>
-<li><a href="#_example_applications">Example Applications</a>
-<ul class="sectlevel2">
-<li><a href="#_omnimarketcap">OmniMarketCap</a></li>
-<li><a href="#_omniportfolio">OmniPortfolio</a></li>
-</ul>
-</li>
-</ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_overview">Overview</h2>
+<h2 id="_install_raspberry_pi_os_64_bit">Install Raspberry Pi OS 64-bit</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><strong>btcproxy</strong> (also known as <strong>OmniProxy</strong> when OmniLayer functionality is enabled) is a multi-function proxy server that communicates with <strong>Bitcoin Core</strong> (or <strong>Omni Core</strong> which is an extended version of <strong>Bitcoin Core</strong>) and can be used for the following purposes:</p>
-</div>
+<div class="sect2">
+<h3 id="_handy_microsds_to_have">Handy MicroSDs to Have</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Create a public API to a Bitcoin Core node</p>
+<p>8 GB with EEPROM flash for SD Card + USB Boot</p>
 </li>
 <li>
-<p>Provide a relatively lightweight backend for a non-custodial wallet</p>
+<p>16/32 GB with system setup tools</p>
+<div class="ulist">
+<ul>
+<li>
+<p>rpi-imager</p>
 </li>
 <li>
-<p>Use as a framework for creating Bitcoin-based or Omni-based applications</p>
+<p>gparted</p>
 </li>
 <li>
-<p>Create Bitcoin or Omni Lightning applications (requires Lightning Node)</p>
+<p>btrfs?</p>
 </li>
 <li>
-<p>Create Blockchain viewer applications</p>
+<p>latest 64-bit installation image</p>
 </li>
-<li>
-<p>Create real-time Blockchain analysis applications</p>
+</ul>
+</div>
 </li>
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_functionality">Functionality</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Current and planned core functionality includes</p>
-</div>
+<div class="sect2">
+<h3 id="_os_installation">OS Installation</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>JSON-RPC request proxying</p>
+<p>User rpi-imager to format the drive (partitions can be resized, etc later)</p>
 </li>
 <li>
-<p>JSON-RPC request filtering ("allow list" for permitted methods)</p>
+<p>boot from the drive</p>
 </li>
 <li>
-<p>JSON-RPC request caching</p>
+<p>install:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>gparted</code></p>
 </li>
 <li>
-<p>JSON-RPC request aggregation and value-added computation</p>
+<p><code>btrfs-progs</code></p>
 </li>
 <li>
-<p>Efficiently processing ZeroMQ push-based messages from Bitcoin Core</p>
+<p><code>nvme-cli</code> (if you are using an PCI-attached NVMe drive, see <a href="https://www.cyberciti.biz/faq/linux-find-nvme-ssd-temperature-using-command-line/">this</a> for how to check temperature)</p>
 </li>
-<li>
-<p>WebSocket gateway/proxy for ZeroMQ messages (under development)</p>
-</li>
-<li>
-<p>REST API for Bitcoin Core functionality (under development)</p>
+</ul>
+</div>
 </li>
 </ul>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_docker_install">Docker Install</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>$ sudo apt install docker.io</code></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
 </div>
 <div class="sect1">
-<h2 id="_implementation_technology">Implementation Technology</h2>
+<h2 id="_omni_core_addrindex">Omni Core AddrIndex</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><strong>btcproxy</strong> is written in <em>modern</em> Java. What do we mean by <em>modern</em>?</p>
-</div>
+<div class="sect2">
+<h3 id="_options">options</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>Implemented using OpenJDK 17 language features and API</p>
+<p><code>txindex</code></p>
 </li>
 <li>
-<p><strong>bitcoinj</strong> data types are used, to provide access to Bitcoin data validation, cryptographic operations, formatting, etc.</p>
-</li>
-<li>
-<p>Major interfaces are asynchronous (<code>CompletableFuture</code>) and/or reactive (<strong>RxJava</strong> 3)</p>
-</li>
-<li>
-<p>Written in functional-style Java with minimal mutable state</p>
-</li>
-<li>
-<p>Supports ahead-of-time compilation to native executable using GraalVM <code>native-image</code></p>
-</li>
-<li>
-<p>Can also be deployed on latest HotSpot VMs for compatible use-cases</p>
-</li>
-<li>
-<p>High-performance, event-driven I/O using modern concurrency constructs</p>
-</li>
-<li>
-<p>Uses the modern, cloud-native <strong>Micronaut Framework</strong></p>
-</li>
-<li>
-<p>Docker Images available (both native-image and OpenJDK runtime)</p>
+<p><code>experimental-btc-balances</code></p>
 </li>
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_use_cases_and_sequence_diagrams">Use Cases and Sequence Diagrams</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This section provides explanation of current and future user cases along with sequence diagrams showing the data-flow for that use case.</p>
-</div>
 <div class="sect2">
-<h3 id="_end_to_end_push_e_g_new_transaction">End-to-end Push (e.g. new Transaction)</h3>
-<div class="paragraph">
-<p>The core architecture supports receiving updated blockchain data via low-latency/push operations. (Currently, ZeroMQ messages from Bitcoin/Omni Core are supported, but the WebSocket client interface is still under development.)</p>
-</div>
-<div id="seq-diagram-push" class="imageblock">
-<div class="content">
-<img src="diag-131f9dabda78e7bc2203e8db7c2f95c5.svg" alt="diag 131f9dabda78e7bc2203e8db7c2f95c5" width="482" height="186">
-</div>
+<h3 id="_rescan">rescan</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cleanstart</code></p>
+</li>
+<li>
+<p><code>reindex</code></p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_json_rpc_client_api">JSON-RPC Client API</h3>
-<div class="sect3">
-<h4 id="_simple_json_rpc_proxying">Simple JSON-RPC Proxying</h4>
-<div class="paragraph">
-<p>This is the default behavior for any RPC method that is on the allow-list.</p>
+<h3 id="_add_a_dev_user">Add a dev user</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo adduser sean</code></p>
+</li>
+<li>
+<p><code>sudo usermod newuser_name -a -G pi,adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio</code></p>
+</li>
+<li>
+<p><code>cd /etc/sudoers.d</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Duplicate the <code>pi</code> user file, edit and change the username</p>
+</li>
+</ul>
 </div>
-<div id="seq-diagram-jsonrpc-proxy" class="imageblock">
-<div class="content">
-<img src="diag-27a6afaf07bf62695db1c0ce3fac4ed5.svg" alt="diag 27a6afaf07bf62695db1c0ce3fac4ed5" width="583" height="245">
+</li>
+<li>
+<p><code>sudo vi /etc/lightdm/lightdm.conf</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Find the line <code>autologin-user=pi</code> and change the username</p>
+</li>
+</ul>
 </div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_json_rpc_proxy_wcache">JSON-RPC Proxy w/Cache</h4>
-<div class="paragraph">
-<p>For RPC methods that are frequently requested and/or computationally expensive (such as <code>gettxoutsetinfo</code>) it is essential that the responses be cached. For many methods it makes sense to cache the response and invalidate and refresh whenever a new block is mined. This approach works well for <code>gettxoutsetinfo</code>.</p>
-</div>
-<div id="seq-diagram2" class="imageblock">
-<div class="content">
-<img src="diag-bb0397488f01356a9ace4552508eba2d.svg" alt="diag bb0397488f01356a9ace4552508eba2d" width="662" height="406">
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_aggregation_calculation_and_caching">Aggregation, Calculation, and Caching</h4>
-<div class="paragraph">
-<p>It is also possible to create new RPC methods like <code>omniproxy.listproperties</code> that can return the detailed information for each Omni token (smart property) (as returned for a single property by <code>omni_getproperty</code>) but for all current Omni tokens (like the less detailed information provided by <code>omni_listproperties</code>.)</p>
-</div>
-<div class="paragraph">
-<p>The server will be able to be extended via plugins (plugin mechanism TBD) that can add new, reactive aggregations and computations. (You can look at the existing Omni Layer operations for examples and Pull Requests are welcome.)</p>
-</div>
-<div id="seq-diagram3" class="imageblock">
-<div class="content">
-<img src="diag-3477bf6f0d71964d1c8d823356bc7fb4.svg" alt="diag 3477bf6f0d71964d1c8d823356bc7fb4" width="669" height="406">
-</div>
-</div>
+</li>
+<li>
+<p>See  <a href="https://forums.raspberrypi.com/viewtopic.php?t=169079" class="bare">https://forums.raspberrypi.com/viewtopic.php?t=169079</a> for details</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_full_node_bitcoinj_based">Full Node (bitcoinj-based)</h3>
-<div class="paragraph">
-<p>There is also available a partial implementation of a subset of Bitcoin functionality using the bitcoinj-based implementation. This can use the bitcoinj SPV chain or the experimental SPV full-pruned-node implementation. In this configuration we call the application <strong>J-Bitcoin-D</strong>.</p>
-</div>
-<div id="seq-diagram-jsonrpc-proxy" class="imageblock">
-<div class="content">
-<img src="diag-3de56018759e1b44a87af0b2a0e3455d.svg" alt="diag 3de56018759e1b44a87af0b2a0e3455d" width="408" height="305">
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_example_applications">Example Applications</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_omnimarketcap">OmniMarketCap</h3>
-<div class="paragraph">
-<p>OmniMarketCap is a relatively simple application that lets you view the entire list of Omni Tokens (Smart Properties) using live data from the OmniLayer on the Bitcoin blockchain. Using price feeds from centralized exchanges (for <code>BTC</code>, <code>OMNI</code>, <code>USDT</code>, <code>MAID</code>, and a few others) it is able to rank Omni tokens by a dynamically updated market capitalization (as new tokens are created or granted "total tokens" is updated, and the market cap is "total tokens" multiplied by the exchange rate.) It also provides dynamically-updated rich lists showing the distribution of market-cap by Bitcoin address.</p>
-</div>
-<div class="paragraph">
-<p>OmniMarketCap is an OmniProxy client app and works according to the principals illustrated in the sequence diagrams above&#8201;&#8212;&#8201;it is represented by the <strong>ClientApp</strong> box. In addition, it uses reactive user-interface design patterns so all displayed data updates dynamically the instant new data arrives from the network.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_omniportfolio">OmniPortfolio</h3>
-<div class="paragraph">
-<p>The last release of OmniPortfolio used the OmniAPI. A new version is under development that uses OmniProxy directly.</p>
+<h3 id="_ssd_temperature_check_sudo">SSD Temperature Check                      sudo</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo nvme smart-log /dev/nvme0n1 | grep temp</code></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -666,7 +598,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 0.4.0<br>
-Last updated 2022-02-16 13:49:37 -0800
+Last updated 2021-11-22 23:40:18 -0800
 </div>
 </div>
 </body>

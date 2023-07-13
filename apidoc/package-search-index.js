@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"foundation.omni.proxy.analysis"},{"l":"org.consensusj.bitcoin.proxy.core"},{"l":"org.consensusj.bitcoin.proxy.jsonrpc"},{"l":"org.consensusj.bitcoin.proxyd"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"foundation.omni.proxy.analysis"},{"l":"org.consensusj.bitcoin.proxy.jsonrpc"},{"l":"org.consensusj.bitcoin.proxyd"}];updateSearchResults();
