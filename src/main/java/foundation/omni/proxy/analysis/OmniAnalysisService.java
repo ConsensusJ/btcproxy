@@ -4,23 +4,18 @@ import foundation.omni.CurrencyID;
 import foundation.omni.OmniValue;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
-import org.bitcoinj.base.Address;
-import org.bitcoinj.base.AddressParser;
-import org.bitcoinj.base.DefaultAddressParser;
 import org.consensusj.bitcoin.proxy.jsonrpc.ExtraRpcRegistry;
 
 import jakarta.inject.Singleton;
-
-import java.util.List;
+import static org.consensusj.bitcoin.proxy.jsonrpc.RpcParmParser.*;
 
 /**
- * Service that combines Omni rich list and property list and makes available as "extra" RPCs
+ * Service that adds "extra" RPCs, such as {@code omniproxy.help}, {@code omniproxy.getrichlist}
  */
 @Singleton
 @Context
 @Requires(property="omniproxyd.enabled", value = "true")
 public class OmniAnalysisService {
-    private static final AddressParser addressParser = new DefaultAddressParser();
     private final ExtraRpcRegistry rpcRegistry;
     private final CachedRichListService<OmniValue, CurrencyID> richListService;
     private final OmniPropertyListService propertyListService;
@@ -69,41 +64,4 @@ public class OmniAnalysisService {
         }
         return CurrencyID.of(id);
     }
-
-    private static int parmToInt(Object param) {
-        int result;
-        if (param instanceof Number) {
-            result = ((Number) param).intValue();
-        } else if (param instanceof String) {
-            try {
-                result = Integer.parseInt((String) param);
-            } catch (NumberFormatException e) {
-                throw e;
-            }
-        } else {
-            throw new IllegalArgumentException("can't covert to integer");
-        }
-        return result;
-    }
-
-    private static String parmToString(Object param) {
-        if (param instanceof String) {
-            return (String) param;
-        } else {
-            throw new IllegalArgumentException("can't covert to integer");
-        }
-    }
-
-    private static Address parmToAddress(Object param) {
-        if (param instanceof String) {
-            return addressParser.parseAddressAnyNetwork((String) param);
-        } else {
-            throw new IllegalArgumentException("can't covert to address");
-        }
-    }
-
-    private static List<Address> parmsToAddressList(List<Object> params) {
-        return params.stream().map(OmniAnalysisService::parmToAddress).toList();
-    }
-
 }
