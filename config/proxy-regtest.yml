@@ -35,10 +35,14 @@ btcproxyd:
       - sendrawtransaction
       - omni_listproperties
       - omni_getproperty
+      - btcproxy.help
+      - btcproxy.proxyinfo
       - omniproxy.help
+      - omniproxy.getbalance
+      - omniproxy.getbalances
+      - omniproxy.getproperty
       - omniproxy.getrichlist
       - omniproxy.listproperties
-      - omniproxy.getproperty
 
 omniproxyd:
   enabled: false
