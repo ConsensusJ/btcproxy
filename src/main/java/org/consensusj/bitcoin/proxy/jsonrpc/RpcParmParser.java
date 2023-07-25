@@ -14,11 +14,11 @@ public class RpcParmParser {
 
     public static int parmToInt(Object param) {
         int result;
-        if (param instanceof Number) {
-            result = ((Number) param).intValue();
-        } else if (param instanceof String) {
+        if (param instanceof Number num) {
+            result = num.intValue();
+        } else if (param instanceof String string) {
             try {
-                result = Integer.parseInt((String) param);
+                result = Integer.parseInt(string);
             } catch (NumberFormatException e) {
                 throw e;
             }
@@ -29,16 +29,16 @@ public class RpcParmParser {
     }
 
     public static String parmToString(Object param) {
-        if (param instanceof String) {
-            return (String) param;
+        if (param instanceof String string) {
+            return string;
         } else {
             throw new IllegalArgumentException("can't covert to integer");
         }
     }
 
     public static Address parmToAddress(Object param) {
-        if (param instanceof String) {
-            return addressParser.parseAddressAnyNetwork((String) param);
+        if (param instanceof String string) {
+            return addressParser.parseAddressAnyNetwork(string);
         } else {
             throw new IllegalArgumentException("can't covert to address");
         }

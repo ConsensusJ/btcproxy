@@ -32,5 +32,5 @@ public class ExtraRpcMethods {
         return Single.just(new BtcProxyInfo(appName, "unknown"));
     }
 
-    public record BtcProxyInfo(String name, String version){};
+    public record BtcProxyInfo(String name, String version){}
 }
