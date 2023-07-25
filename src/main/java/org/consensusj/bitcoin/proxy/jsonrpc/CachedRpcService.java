@@ -77,7 +77,7 @@ public class CachedRpcService {
                     .doOnSuccess(result -> log.info("got result for cache {}", result))
                     .cache();
         })
-        .doOnError(t -> log.error("Error reading from richList cache", t))
+        .doOnError(t -> log.error("Error reading from RPC cache", t))
         .doOnSuccess(r -> log.debug("pulled from cache {}", r));
     }
 

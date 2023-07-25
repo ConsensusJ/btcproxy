@@ -7,7 +7,7 @@
 *btcproxy* (also known as *OmniProxy* when OmniLayer functionality is enabled) is a multi-function proxy server that communicates with *Bitcoin Core* (or *Omni Core* which is an extended version of *Bitcoin Core*) and can be used for the following purposes:
 
 * Create a public API to a Bitcoin Core node
-* Provide a relatively lightweight backend for a non-custodial wallet
+* Provide a relatively lightweight backend for a noncustodial wallet
 * Use as a framework for creating Bitcoin-based or Omni-based applications
 * Create Bitcoin or Omni Lightning applications (requires Lightning Node)
 * Create Blockchain viewer applications
