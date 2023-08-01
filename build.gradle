@@ -3,7 +3,7 @@ plugins {
     id 'org.asciidoctor.jvm.convert'        version '3.3.2'
     id 'org.asciidoctor.jvm.pdf'            version '3.3.2'
     id 'org.ajoberstar.git-publish'         version '4.2.0'
-    id("com.bmuschko.docker-remote-api")    version "9.3.1" apply false
+    id("com.bmuschko.docker-remote-api")    version "9.3.2" apply false
     id("io.micronaut.application")          version "${micronautAppGradlePluginVersion}"
 }
 
