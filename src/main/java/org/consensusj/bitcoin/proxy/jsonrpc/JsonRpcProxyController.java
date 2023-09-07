@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Micronaut controller for proxying JSON-RPC requests to a remote JSON-RPC server.
  */
-@Controller("/")
+@Controller
 public class JsonRpcProxyController {
     private static final Logger log = LoggerFactory.getLogger(JsonRpcProxyController.class);
     private final RxJsonRpcProxyService jsonRpcProxyService;

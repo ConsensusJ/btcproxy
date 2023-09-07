@@ -41,6 +41,8 @@ btcproxyd:
       - getconnectioncount
       - getnettotals
       - getnetworkinfo
+      - btcproxy.help
+      - btcproxy.proxyinfo
 
 omniproxyd:
   enabled: false

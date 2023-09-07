@@ -172,16 +172,11 @@ public class RxBitcoinJsonRpcProxyService implements RxJsonRpcProxyService {
             result = l.get();
         } else {
             // Else, return a Boolean or String
-            switch (param) {
-                case "false":
-                    result = Boolean.FALSE;
-                    break;
-                case "true":
-                    result = Boolean.TRUE;
-                    break;
-                default:
-                    result = param;
-            }
+            result = switch (param) {
+                case "false" -> Boolean.FALSE;
+                case "true" -> Boolean.TRUE;
+                default -> param;
+            };
         }
         return result;
     }

@@ -23,7 +23,7 @@ class JsonRpcProxyConfigurationSpec extends Specification {
         jsonRpcProxyConfiguration.password                  == 'rpcpassword'
         jsonRpcProxyConfiguration.useZmq                    == false
         jsonRpcProxyConfiguration.allowList[0]              == 'getblockcount'
-        jsonRpcProxyConfiguration.allowList.size()          == 20
+        jsonRpcProxyConfiguration.allowList.size()          == 22
 
         cleanup:
         ctx.close()

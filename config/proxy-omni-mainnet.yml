@@ -37,12 +37,14 @@ btcproxyd:
       - omni_getproperty
       - omni_getallbalancesforaddress
       - omni_getallbalancesforid
+      - btcproxy.help
+      - btcproxy.proxyinfo
       - omniproxy.help
       - omniproxy.getbalance
       - omniproxy.getbalances
+      - omniproxy.getproperty
       - omniproxy.getrichlist
       - omniproxy.listproperties
-      - omniproxy.getproperty
 
 omniproxyd:
   enabled: true

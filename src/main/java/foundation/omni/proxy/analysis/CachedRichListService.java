@@ -63,9 +63,9 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     private void onNewBlock(ChainTip tip) {
         log.info("New Block: clearing cache & starting eager fetch");
         cache.clear();
-        eager.forEach(id -> {
-            this.fetch(id).subscribe((r) -> {} , this::onError);
-        });
+        eager.forEach(id ->
+            this.fetch(id).subscribe((r) -> {} , this::onError)
+        );
     }
 
     private Single<TokenRichList<N, ID>> fetch(ID id) {

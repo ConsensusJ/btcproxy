@@ -53,11 +53,9 @@ public class OmniAnalysisService {
 
     private static CurrencyID toCurrencyId(Object unknownIdType) {
         long id;
-        if (unknownIdType instanceof String) {
-            String idString = (String) unknownIdType;
+        if (unknownIdType instanceof String idString) {
             id = Long.parseLong(idString);
-        } else if (unknownIdType instanceof Number) {
-            Number idNum = (Number) unknownIdType;
+        } else if (unknownIdType instanceof Number idNum) {
             id = idNum.longValue();
         } else {
             throw new IllegalArgumentException("can't covert to CurrencyID");
