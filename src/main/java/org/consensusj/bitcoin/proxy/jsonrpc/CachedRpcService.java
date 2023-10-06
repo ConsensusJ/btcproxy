@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.consensusj.bitcoin.json.pojo.ChainTip;
+import org.consensusj.bitcoin.rx.ChainTipPublisher;
 import org.consensusj.bitcoin.rx.jsonrpc.RxBitcoinClient;
 import org.consensusj.jsonrpc.JsonRpcRequest;
 import org.consensusj.jsonrpc.JsonRpcResponse;
@@ -12,9 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO: Refactor to remover usage of RxJava, except ChainTipPublisher which will migrate to Flow.Publisher
 /**
  *  This prototype caching service implementation works best for RPC methods that:
  *  <ul>
@@ -31,17 +34,20 @@ public class CachedRpcService {
     private final Set<String> cached = Set.of("getchaintips", "getblockcount", "getblockchaininfo", "getbestblockhash", "gettxoutsetinfo");
     private final ConcurrentHashMap<String, Single<Object>> cache = new ConcurrentHashMap<>();
     private final RxBitcoinClient rxBitcoinClient;
+    private final ChainTipPublisher chainTipPublisher;
     private Disposable chainTipSubscription;
 
-    public CachedRpcService( RxBitcoinClient rxBitcoinClient) {
+    // TODO: Change constructor to take a regular BitcoinClient
+    public CachedRpcService(RxBitcoinClient rxBitcoinClient, ChainTipPublisher chainTipPublisher) {
         this.rxBitcoinClient = rxBitcoinClient;
+        this.chainTipPublisher = chainTipPublisher;
     }
 
     @PostConstruct
     public synchronized void start() {
         if (chainTipSubscription == null) {
             log.info("starting");
-            chainTipSubscription = Flowable.fromPublisher(rxBitcoinClient.chainTipPublisher())
+            chainTipSubscription = Flowable.fromPublisher(chainTipPublisher)
                     .subscribe(this::onNewBlock, this::onError);
         }
     }
@@ -50,6 +56,7 @@ public class CachedRpcService {
         return cached.contains(request.getMethod());
     }
 
+    // TODO: Change to return CompletableFuture
     public Single<JsonRpcResponse<?>> callCached(JsonRpcRequest request) {
         return fetch(request.getMethod())
             .map(result -> responseFromResult(request, result));
