@@ -63,8 +63,6 @@ dependencies {
     runtimeOnly "org.yaml:snakeyaml"
     runtimeOnly("ch.qos.logback:logback-classic")
 
-    implementation 'org.bouncycastle:bcprov-jdk15to18:1.76'
-
     implementation "com.msgilligan:cj-btc-jsonrpc:${consensusjVersion}"
     implementation "com.msgilligan:cj-btc-rx-jsonrpc:${consensusjVersion}"
 
