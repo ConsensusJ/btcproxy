@@ -6,6 +6,7 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.runtime.Micronaut;
 import org.consensusj.bitcoin.json.conversion.RpcServerModule;
 import org.consensusj.bitcoin.proxy.jsonrpc.JsonRpcProxyConfiguration;
+import org.consensusj.bitcoin.rx.ChainTipPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,5 +38,10 @@ public class Application {
                 false);
         //client.start();
         return client;
+    }
+
+    @Singleton
+    ChainTipPublisher chainTipPublisher(OmniClient omniClient) {
+        return omniClient.chainTipPublisher();
     }
 }

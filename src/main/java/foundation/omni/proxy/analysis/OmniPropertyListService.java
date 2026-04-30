@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.bitcoinj.base.BitcoinNetwork;
 import org.consensusj.bitcoin.json.pojo.ChainTip;
+import org.consensusj.bitcoin.rx.ChainTipPublisher;
 import org.consensusj.bitcoin.rx.jsonrpc.service.TxOutSetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +45,11 @@ public class OmniPropertyListService implements Closeable {
     private Disposable intervalSubscription;
     private Disposable outSetSubscription;
 
-    OmniPropertyListService(OmniClient omniClient) {
+    OmniPropertyListService(OmniClient omniClient, ChainTipPublisher chainTipPublisher) {
         rxJsonClient = omniClient;
         cache = new OmniPropertyListCache((BitcoinNetwork) rxJsonClient.getNetwork());
         activeProperties = rxJsonClient.getNetwork().equals(BitcoinNetwork.MAINNET) ? List.of(OMNI, TOMNI, USDT) : List.of(OMNI, TOMNI);
-        txOutSetService = new TxOutSetService(omniClient);
+        txOutSetService = new TxOutSetService(omniClient, chainTipPublisher);
         timerInterval = Flowable.interval(3,1, TimeUnit.SECONDS);
     }
 
@@ -63,7 +64,7 @@ public class OmniPropertyListService implements Closeable {
         }
         // Subscribe to a TxOutSetInfo stream (happens once per block, but delayed because the calculation takes some time)
         if (outSetSubscription == null) {
-            outSetSubscription = txOutSetService.getTxOutSetPublisher()
+            outSetSubscription = Flowable.fromPublisher(txOutSetService.getTxOutSetPublisher())
                     .subscribe(cache::cachePutBitcoin,
                             t -> log.error("TxOutSetService", t),
                             () -> log.error("TxOutSetService completed"));

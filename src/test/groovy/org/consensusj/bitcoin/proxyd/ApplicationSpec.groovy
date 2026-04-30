@@ -1,7 +1,12 @@
 package org.consensusj.bitcoin.proxyd
 
+import io.micronaut.context.annotation.Replaces
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Singleton
+
+import org.consensusj.bitcoin.rx.ChainTipPublisher
+import org.consensusj.bitcoin.rx.jsonrpc.test.TestChainTipPublishers
 import org.consensusj.jsonrpc.JsonRpcStatusException
 import org.consensusj.jsonrpc.groovy.DynamicRpcClient
 import spock.lang.Shared
@@ -56,5 +61,11 @@ class ApplicationSpec extends Specification {
         e.message == "Method not found"
         e.jsonRpcCode == -32601
         // TODO e.httpCode == ??
+    }
+
+    @Replaces(ChainTipPublisher)
+    @Singleton
+    ChainTipPublisher chainTipService() {
+        return TestChainTipPublishers.never();
     }
 }

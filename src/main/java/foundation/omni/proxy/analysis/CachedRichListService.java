@@ -7,6 +7,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import org.consensusj.analytics.service.RichListService;
 import org.consensusj.analytics.service.TokenRichList;
 import org.consensusj.bitcoin.json.pojo.ChainTip;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class CachedRichListService<N extends Number & Comparable<? super N>, ID>
     }
 
     @Override
-    public Flowable<TokenRichList<N, ID>> richListUpdates(ID id, int i) {
+    public Publisher<TokenRichList<N, ID>> richListUpdates(ID id, int i) {
         throw new UnsupportedOperationException("this service is incubating and this method isn't available yet.");
     }
 
