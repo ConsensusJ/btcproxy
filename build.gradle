@@ -34,7 +34,7 @@ micronaut {
     testRuntime("spock2")
     processing {
         incremental(true)
-        annotations("org.consensusj.bitcoin.proxyd.*")
+        annotations("org.consensusj.bitcoin.proxyd.*,org.consensusj.bitcoin.proxy.jsonrpc.*,foundation.omni.proxy.analysis.*")
     }
 }
 
@@ -44,7 +44,7 @@ graalvmNative {
             imageName = 'btcproxyd'
             buildArgs.add('--initialize-at-run-time=io.netty.handler.ssl.OpenSslAsyncPrivateKeyMethod,io.netty.handler.ssl.OpenSsl,io.netty.handler.ssl.OpenSslPrivateKeyMethod,io.netty.internal.tcnative.CertificateVerifier,io.netty.internal.tcnative.SSL,io.netty.internal.tcnative.SSLPrivateKeyMethod')
             javaLauncher = javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(17)
+                languageVersion = JavaLanguageVersion.of(25)
                 vendor = JvmVendorSpec.matching("GraalVM Community")
             }
         }
